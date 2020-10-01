@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @Table
 public class Bill implements Serializable {
     @Id
-    @Column
+    @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
@@ -29,12 +29,11 @@ public class Bill implements Serializable {
     @Column
     private int money;
 
-    @Column
+    @Column(name="created_time")
     private Timestamp createdDate;
 
     @Builder
     public Bill(User user, int point, int money, Timestamp createdDate){
-
         this.user =user;
         this.point = point;
         this.money = money;
