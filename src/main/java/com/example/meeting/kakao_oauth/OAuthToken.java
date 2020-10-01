@@ -1,4 +1,4 @@
-package com.example.realboard;
+package com.example.meeting.kakao_oauth;
 
 import lombok.Data;
 
