@@ -31,17 +31,17 @@ public class UserRestController {
 
 
 
-    @GetMapping("/test/user1")
-    public @ResponseBody String testtt(@RequestParam(value="email") String email, @RequestParam(value="password") String password){
-        return email + "안녕";
+//    @GetMapping("/test/user1")
+//    public @ResponseBody String testtt(@RequestParam(value="email") String email, @RequestParam(value="password") String password){
+//        return email + "안녕";
+//
+//    }
 
-    }
-
-    @PostMapping("/test/user")
+    @PostMapping("/login/check")
     public @ResponseBody
     String testTest(@RequestBody UserTest tmp){
         User user = userRepository.findByEmail(tmp.getEmail());
-
+        //비밀번호도 저장한 후 만들어주자
         if(user == null){
             return "미안";
         }else{
