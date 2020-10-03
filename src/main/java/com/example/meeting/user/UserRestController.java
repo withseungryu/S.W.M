@@ -37,13 +37,13 @@ public class UserRestController {
 //
 //    }
 
-    @PostMapping("/login/check")
+    @PostMapping("/users/login")
     public @ResponseBody
     String testTest(@RequestBody UserTest tmp){
         User user = userRepository.findByEmail(tmp.getEmail());
         //비밀번호도 저장한 후 만들어주자
         if(user == null){
-            return "미안";
+            return "실패";
         }else{
             return "성공";
         }
