@@ -29,13 +29,13 @@ public class User implements Serializable {
     private String email;
 
     @Column
-    private int gender;
+    private String gender;
 
     @Column
-    private int age_range;
+    private String age_range;
 
     @Column
-    private int birth;
+    private String birth;
 
 
 //    @Column
@@ -45,7 +45,7 @@ public class User implements Serializable {
 //    private LocalDateTime supdatedDate;
 
     @Builder
-    public User(String name, String email, int gender, int age_range, int birth){
+    public User(String name, String email, String gender, String age_range, String birth){
         this.name =name;
 //        this.password = password;
         this.email = email;
