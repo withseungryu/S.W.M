@@ -29,11 +29,20 @@ public class UserRestController {
         return "{code: 0001, message: \"성공\"}";
     }
 
-    @GetMapping("/test/user")
-    public @ResponseBody
-    String testTest(@RequestParam(value = "email") String email, @RequestParam(value = "password") String password){
 
-        return email + "안뇽" + password;
+
+    @GetMapping("/test/user1")
+    public @ResponseBody String testtt(@RequestParam(value="email") String email, @RequestParam(value="password") String password){
+        return email + "안녕";
+
+    }
+
+    @PostMapping("/test/user")
+    public @ResponseBody
+    String testTest(@RequestBody UserTest tmp){
+
+        System.out.println(tmp.getEmail());
+        return tmp.getEmail() + "안뇽" + tmp.getPassword();
     }
 
 
