@@ -40,9 +40,14 @@ public class UserRestController {
     @PostMapping("/test/user")
     public @ResponseBody
     String testTest(@RequestBody UserTest tmp){
+        User user = userRepository.findByEmail(tmp.getEmail());
 
-        System.out.println(tmp.getEmail());
-        return tmp.getEmail() + "안뇽" + tmp.getPassword();
+        if(user == null){
+            return "미안";
+        }else{
+            return "성공";
+        }
+
     }
 
 
