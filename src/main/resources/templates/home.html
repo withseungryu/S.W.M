@@ -2,12 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Thymeleaf 예제</title>
+    <title>컴퓨터과학종합설계</title>
 </head>
 <body>
-    <h1>Shall we meet?</h1>
-    <span>장근석 (Android, DB)</span>
-    <span>김환석 (Server, IOS)</span>
-    <span>박민승 (Server, DB)</span>
+    <h1><img src="tmp.PNG"/> Shall we meet?</h1>
+
+    <p th:text="${greeting}"></p>
+    <p>장근석 (Android, DB)  github : geunseok95 </p>
+    <p>김환석 (Server, IOS)  github : 10000sukk</p>
+    <p>박민승 (Server, DB)   github : withseungryu</p>
+
 </body>
 </html>
