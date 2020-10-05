@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>컴퓨터과학종합설계</title>
+    <link th:href="@{/styles/css/main.css}" rel="stylesheet" />
 </head>
+
 <body>
     <h1><img src="tmp.PNG"/> Shall we meet?</h1>
 
@@ -12,5 +14,20 @@
     <p>김환석 (Server, IOS)  github : 10000sukk</p>
     <p>박민승 (Server, DB)   github : withseungryu</p>
 
+
+    <table>
+        <thead>
+        <tr>
+            <th> Title </th>
+            <th> Author </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.email}"></td>
+        </tr>
+        </tbody>
+    </table>
 </body>
 </html>
