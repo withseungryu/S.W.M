@@ -33,7 +33,7 @@ public class OAuth {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type","authorization_code");
         params.add("client_id","3a21998518680e26a7713430c60ac0a3");
-        params.add("redirect_uri","http://192.168.0.8:8081/auth/kakao/callback");
+        params.add("redirect_uri","http://localhost:8081/auth/kakao/callback");
         params.add("code", code);
         params.add("client_secret", "gT8VS2oi38BgR7rKe6cTDOnEF8eu51dh");
 

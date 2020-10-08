@@ -28,7 +28,7 @@ public class BoardRestController {
 
     @PostMapping("/boards")
     public ResponseEntity<?> postBoard(@RequestBody Board board) {
-        board.setImgs(board.getImg1(), board.getImg2(), board.getImg3());
+
         board.setCreatedDateNow();
         board.setUpdatedDateNow();
         boardRepository.save(board);

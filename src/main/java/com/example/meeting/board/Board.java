@@ -90,9 +90,9 @@ public class Board implements Serializable {
     }
 
     public void setImgs(String img1, String img2, String img3){
-        this.img1 = "http://localhost:8081/test/" + img1;
-        this.img2 = "http://localhost:8081/test/" + img2;
-        this.img3 = "http://localhost:8081/test/" + img3;
+        this.img1 = img1;
+        this.img2 = img2;
+        this.img3 = img3;
     }
 
 
