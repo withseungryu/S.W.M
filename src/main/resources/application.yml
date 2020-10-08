@@ -1,5 +1,10 @@
 server:
   port: 8081
+#  ssl :
+#    key-store: keystore.p12
+#    key-store-password: min753951
+#    keyStoreType: PKCS12
+#    keyAlias: tomcat
 
 spring:
   datasource:
