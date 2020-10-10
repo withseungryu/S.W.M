@@ -1,12 +1,10 @@
 server:
-  port: 8080
+  port: 8081
   ssl :
     key-store: keystore.p12
     key-store-password: swm12345
     keyStoreType: PKCS12
     keyAlias: swm
-
-
 
 spring:
   datasource:
