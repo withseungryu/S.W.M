@@ -49,18 +49,17 @@ public class UserRestController {
         }
 
     }
-//
-//    @PostMapping("/users/profile")
-//    public @ResponseBody
-//    String postProfile(@RequestBody LoginInfo info){
-//        String nickname = info.getNickname();
-//        String pImg = info.getPImg();
-//
-//
-//
-//        return "토큰도 줘야함";
-//
-//    }
+
+    @PostMapping("/users/profile")
+    public @ResponseBody
+    String postProfile(@RequestBody LoginInfo info){
+        String nickname = info.getNickname();
+        String pImg = info.getPImg();
+
+        User user = userRepository.findByNickName(info.getNickname());
+        return "토큰도 줘야함";
+
+    }
 
 
 }
