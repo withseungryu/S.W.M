@@ -56,21 +56,12 @@ public class UserRestController {
 
     }
 
-    @Autowired
-    FileUploadService fileUploadService;
+
 
     @PostMapping("/users/profile")
     public @ResponseBody
     String uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile files) throws IllegalStateException, IOException {
-        Arrays.asList(files)
-                .stream()
-                .forEach(file -> {
-                    try {
-                        fileUploadService.uploadFile(file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+
         return "성공";
     }
 

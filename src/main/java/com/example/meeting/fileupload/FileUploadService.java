@@ -11,19 +11,19 @@ import java.util.List;
 @Service
 public class FileUploadService {
 
-    public void uploadFile(MultipartFile file) throws IllegalStateException, IOException {
-        file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
-//        for(MultipartFile file: files) {
-//            file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
-//        }
-    }
-
-    public void uploadProfile(MultipartFile file) throws IllegalStateException, IOException {
-        file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
-//        for(MultipartFile file: files) {
-//            file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
-//        }
-    }
+//    public void uploadFile(MultipartFile file) throws IllegalStateException, IOException {
+//        file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
+////        for(MultipartFile file: files) {
+////            file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
+////        }
+//    }
+//
+//    public void uploadProfile(MultipartFile file) throws IllegalStateException, IOException {
+//        file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
+////        for(MultipartFile file: files) {
+////            file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
+////        }
+//    }
 }
 
 

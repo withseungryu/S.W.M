@@ -21,18 +21,9 @@ public class FileUploadController {
     FileUploadService fileUploadService;
 
     @PostMapping("/img/upload")
-    public @ResponseBody
-    String uploadFile(HttpServletRequest request, @RequestParam("files") MultipartFile[] files) throws IllegalStateException, IOException {
-        Arrays.asList(files)
-                .stream()
-                .forEach(file -> {
-                    try {
-                        fileUploadService.uploadFile(file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            return "성공";
+    @ResponseBody
+    public String uploadFile(HttpServletRequest request, @RequestParam("files") MultipartFile[] files) throws IllegalStateException, IOException {
+        return "성공";
     }
 
 }

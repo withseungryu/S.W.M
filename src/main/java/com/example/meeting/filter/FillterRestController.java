@@ -2,9 +2,7 @@ package com.example.meeting.filter;
 
 import com.example.meeting.board.Board;
 import com.example.meeting.board.BoardRepository;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -27,9 +25,46 @@ public class FillterRestController {
     }
 
     @GetMapping(value ="/filter")
-    public List<BoardDto> getFilterAge(@RequestParam("age") int age){
-        System.out.println(age);
-        List<Board> boards = boardRepository.findByAgeLessThanEqualAndAgeGreaterThanEqual(age+3, age-3);
+    public List<BoardDto> getFilterAge(@RequestParam(value = "location", required = false) String location, @RequestParam(value ="num_type" ,required = false) String num_type, @RequestParam(value ="age", required = false) String age){
+        System.out.println(location + " " + num_type + " " + age );
+
+        System.out.println(location.getClass().getName());
+        List<Board> boards = new ArrayList<>();
+
+        if(location.equals("상관없음") && num_type.equals("상관없음") && age.equals("상관없음")){
+            System.out.println("1");
+             boards = boardRepository.findAll();
+        }else if(location.equals("상관없음") && num_type.equals("상관없음")){
+            System.out.println("2");
+            int age1 = Integer.parseInt(age) +3;
+            int age2 = Integer.parseInt(age) -3;
+             boards = boardRepository.getList3(age1, age2);
+        }else if(location.equals("상관없음") && age.equals("상관없음")){
+            System.out.println("3");
+            boards = boardRepository.getList2(num_type);
+        }else if(age.equals("상관없음") && num_type.equals("상관없음")){
+            System.out.println("4");
+            boards = boardRepository.getList1(location);
+        }else if(location.equals("상관없음")){
+            System.out.println("5");
+            int age1 = Integer.parseInt(age) +3;
+            int age2 = Integer.parseInt(age) -3;
+            boards = boardRepository.getList6(num_type, age1, age2);
+        }else if(num_type.equals("상관없음")){
+            System.out.println("6");
+            int age1 = Integer.parseInt(age) +3;
+            int age2 = Integer.parseInt(age) -3;
+            boards = boardRepository.getList5(location, age1,age2);
+
+        }else if(age.equals("상관없음")){
+            System.out.println("7");
+            boards = boardRepository.getList4(location, num_type);
+        }else{
+            System.out.println("8");
+            int age1 = Integer.parseInt(age) +3;
+            int age2 = Integer.parseInt(age) -3;
+            boards = boardRepository.getList7(location, num_type, age1, age2);
+        }
 
 
         List<BoardDto> boardDtos = new ArrayList<BoardDto>();
@@ -44,10 +79,10 @@ public class FillterRestController {
             boardDto.setKeyword(boards.get(i).getKeyword());
             boardDto.setLocation(boards.get(i).getLocation());
             boardDto.setNum_type(boards.get(i).getNum_type());
-            boardDto.setAge(boards.get(i).getAge());
+            boardDto.setAge(Integer.toString(boards.get(i).getAge()));
             boardDto.setGender(boards.get(i).getGender());
-            boardDto.setCreatedDate(boards.get(i).getCreatedDate());
-            boardDto.setUpdatedDate(boards.get(i).getUpdatedDate());
+            boardDto.setCreatedDate(boards.get(i).getCreatedDate().toString());
+            boardDto.setUpdatedDate(boards.get(i).getUpdatedDate().toString());
 
             boardDtos.add(boardDto);
         }

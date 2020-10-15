@@ -25,14 +25,13 @@ public class BoardDto {
 
     private String num_type;
 
-    private int age;
+    private String age;
 
     private String gender;
 
-    private Timestamp createdDate;
+    private String createdDate;
 
-    private Timestamp updatedDate;
+    private String updatedDate;
 
-    private User user;
 
 }
