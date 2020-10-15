@@ -1,11 +1,17 @@
 package com.example.meeting.user;
 
 
+import com.example.meeting.fileupload.FileUploadService;
 import com.example.meeting.kakao_oauth.OAuthToken;
 import com.example.meeting.kakao_oauth.OAuth;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -50,15 +56,22 @@ public class UserRestController {
 
     }
 
+    @Autowired
+    FileUploadService fileUploadService;
+
     @PostMapping("/users/profile")
     public @ResponseBody
-    String postProfile(@RequestBody LoginInfo info){
-        String nickname = info.getNickname();
-        String pImg = info.getPImg();
-
-        User user = userRepository.findByNickName(info.getNickname());
-        return "토큰도 줘야함";
-
+    String uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile files) throws IllegalStateException, IOException {
+        Arrays.asList(files)
+                .stream()
+                .forEach(file -> {
+                    try {
+                        fileUploadService.uploadFile(file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+        return "성공";
     }
 
 

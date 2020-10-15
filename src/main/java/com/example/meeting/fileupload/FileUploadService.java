@@ -17,4 +17,13 @@ public class FileUploadService {
 //            file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
 //        }
     }
+
+    public void uploadProfile(MultipartFile file) throws IllegalStateException, IOException {
+        file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
+//        for(MultipartFile file: files) {
+//            file.transferTo(new File("C:\\Users\\alstm\\Desktop\\" + file.getOriginalFilename()));
+//        }
+    }
 }
+
+

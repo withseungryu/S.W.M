@@ -47,6 +47,9 @@ public class Board implements Serializable {
     private String num_type;
 
     @Column
+    private int age;
+
+    @Column
     private String gender;
 
     @Column
@@ -60,11 +63,9 @@ public class Board implements Serializable {
     private User user;
 
 
-
-
     @Builder
     public Board(String title, String img1, String img2, String img3,
-                 String keyword, String location, String num_type, String gender,
+                 String keyword, String location, String num_type, int age, String gender,
                  Timestamp createdDate, Timestamp updatedDate, User user){
 
         this.title = title;
@@ -74,6 +75,7 @@ public class Board implements Serializable {
         this.keyword = keyword;
         this.location = location;
         this.num_type = num_type;
+        this.age = age;
         this.gender = gender;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
@@ -106,6 +108,7 @@ public class Board implements Serializable {
         this.keyword = board.getKeyword();
         this.location = board.getLocation();
         this.num_type = board.getNum_type();
+        this.age = age;
         this.gender = board.getGender();
         this.createdDate = board.getCreatedDate();
         LocalDateTime localDateTime = LocalDateTime.now();
