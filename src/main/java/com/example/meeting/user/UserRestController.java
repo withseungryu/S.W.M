@@ -1,18 +1,13 @@
 package com.example.meeting.user;
 
 
-import com.example.meeting.fileupload.FileUploadService;
 import com.example.meeting.kakao_oauth.OAuthToken;
 import com.example.meeting.kakao_oauth.OAuth;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
 
 @RestController
 public class UserRestController {
@@ -43,7 +38,7 @@ public class UserRestController {
 //
 //    }
 
-    @PostMapping("/users/login")
+    @PostMapping("api/users/login")
     public @ResponseBody
     String testTest(@RequestBody UserTest tmp){
         User user = userRepository.findByEmail(tmp.getEmail());
