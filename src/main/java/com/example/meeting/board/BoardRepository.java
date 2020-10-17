@@ -15,6 +15,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 //    public List<Board> findByLocationAndNum_typeAndAgeLessThanEqualAndAgeGreaterThanEqual(String location, String num_type, int age1, int age2);
         public List<Board> findAll();
 
+        public Board findByTitle(String title);
+
         @Query("SELECT b FROM Board b WHERE b.location like ?1")
         public List<Board> getList1(String location);
 

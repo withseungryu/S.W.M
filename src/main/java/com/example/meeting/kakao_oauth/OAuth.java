@@ -101,7 +101,7 @@ public class OAuth {
 
         System.out.println(profile.getId());
         User user = new User();
-        user.setName(profile.getProperties().getNickname());
+        user.setNickName(profile.getProperties().getNickname());
         user.setEmail(profile.getKakao_account().getEmail());
         user.setGender(profile.getKakao_account().getGender());
         user.setAge_range(profile.getKakao_account().getAge_range());

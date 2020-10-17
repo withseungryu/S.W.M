@@ -5,6 +5,19 @@ server:
     key-store-password: swm12345
     keyStoreType: PKCS12
     keyAlias: swm
+cloud:
+  aws:
+    s3:
+      bucket: swmbucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      instanceProfile: true
+      accessKey: AKIA36YNLJ4SQXTSVPXC
+      secretKey: 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
+
 
 spring:
   datasource:

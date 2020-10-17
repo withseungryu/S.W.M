@@ -48,6 +48,6 @@ public class S3Uploader {
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
-        return fileName;
+        return s3Client.getUrl(bucket, fileName).toString();
     }
 }

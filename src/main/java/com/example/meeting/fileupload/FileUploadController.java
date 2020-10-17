@@ -1,14 +1,17 @@
 package com.example.meeting.fileupload;
 
 
+import com.example.meeting.board.Board;
 import com.example.meeting.filter.BoardDto;
+import com.example.meeting.user.User;
+import com.example.meeting.user.UserDto;
+import com.example.meeting.user.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,25 +25,24 @@ import java.util.Map;
 public class FileUploadController {
 
 
-        private S3Uploader s3Service = new S3Uploader();
 
 
-        @PostMapping("/api/users/upload")
-        public String userUpload(@RequestParam("file") MultipartFile file) throws IOException {
+
+    private S3Uploader s3Service;
+    @PostMapping("/api/boards/upload")
+    public @ResponseBody ResponseEntity<String> boardUpload(@RequestParam(value = "img1", required = false) MultipartFile img1, @RequestParam(value="img2", required = false) MultipartFile img2, @RequestParam(value = "img3", required = false) MultipartFile img3)  throws IOException {
+//        System.out.println(data);
+//        System.out.println(data.get("age"));
+//        System.out.println(data.get("location"));
+        String rPath1 = s3Service.upload(img1);
+        String rPath2 = s3Service.upload(img2);
+        String rPath3 = s3Service.upload(img3);
+        System.out.println(rPath1);
+        System.out.println(rPath2);
+        System.out.println(rPath3);
+        return new ResponseEntity<>("rPath", HttpStatus.OK);
 
 
-            return s3Service.upload(file); // S3 bucket의 static/ 폴더를 지정한 것.
-
-
-        }
-//
-        @PostMapping("/api/boards/upload")
-        public String boardUpload(@RequestParam("img1") MultipartFile img1, @RequestParam("img2") MultipartFile img2, @RequestParam("img3") MultipartFile img3, @RequestParam("data") BoardDto bto) throws IOException {
-            s3Service.upload(img1); // S3 bucket의 static/ 폴더를 지정한 것.
-            s3Service.upload(img2); // S3 bucket의 static/ 폴더를 지정한 것.
-            s3Service.upload(img3); // S3 bucket의 static/ 폴더를 지정한 것.
-            return "성공";
-
-        }
+    }
 
 }

@@ -19,11 +19,11 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @Column
-    private String name;
-
     @Column(name="nickname")
     private String nickName;
+
+    @Column
+    private String img;
 
     @Column
     private String email;
@@ -38,16 +38,11 @@ public class User implements Serializable {
     private String birth;
 
 
-//    @Column
-//    private LocalDateTime createdDate;
-//
-//    @Column
-//    private LocalDateTime supdatedDate;
-
     @Builder
-    public User(String name, String email, String gender, String age_range, String birth){
-        this.name =name;
+    public User(String nickName, String img, String email, String gender, String age_range, String birth){
+        this.nickName = nickName;
 //        this.password = password;
+        this.img = img;
         this.email = email;
         this.gender = gender;
         this.age_range = age_range;

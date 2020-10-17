@@ -3,14 +3,15 @@ package com.example.meeting.filter;
 import com.example.meeting.board.Board;
 import com.example.meeting.board.BoardRepository;
 
+import com.example.meeting.fileupload.S3Uploader;
+import com.example.meeting.user.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,10 @@ import java.util.Map;
 public class FillterRestController {
 
     private BoardRepository boardRepository;
-
-    public FillterRestController(BoardRepository boardRepository){
+    private UserRepository userRepository;
+    public FillterRestController(BoardRepository boardRepository, UserRepository userRepository){
         this.boardRepository = boardRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping(value ="/filter")
@@ -91,5 +93,17 @@ public class FillterRestController {
 
 
     }
+
+
+    S3Uploader s3Service = new S3Uploader();
+//    @PostMapping("/api/boards/upload")
+//    public String boardUpload(@RequestParam("img1") MultipartFile img1) throws IOException {
+//
+//          //Test
+
+
+//        return "성공";
+//
+//    }
 
 }
