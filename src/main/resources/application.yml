@@ -1,31 +1,4 @@
-server:
-  port: 8080
-  ssl :
-    key-store: keystore.p12
-    key-store-password: swm12345
-    keyStoreType: PKCS12
-    keyAlias: swm
-cloud:
-  aws:
-    s3:
-      bucket: swmbucket
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
-    credentials:
-      instanceProfile: true
-      accessKey: AKIA36YNLJ4SQXTSVPXC
-      secretKey: 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
 
-
-spring:
-  datasource:
-    url: jdbc:mysql://shallwemeet.cjovnlrq0ly9.ap-northeast-2.rds.amazonaws.com:3306/meeting2?serverTimezone=Asia/Seoul
-#    url: jdbc:mysql://localhost:3306/meeting?serverTimezone=Asia/Seoul
-    username: admin
-    password: swm12345
-    driver-class-name: com.mysql.jdbc.Driver
   data:
     rest:
       base-path: /api
