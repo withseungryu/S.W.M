@@ -27,14 +27,65 @@ public class FileUploadController {
 
 
     private BoardRepository boardRepository;
+    private UserRepository userRepository;
 
 
     private S3Uploader s3Service;
     @PostMapping("/api/boards/upload")
-    public @ResponseBody ResponseEntity<String> boardUpload(@RequestParam(value = "img1") MultipartFile img1, @RequestParam(value="img2") MultipartFile img2, @RequestParam(value = "img3") MultipartFile img3)  throws IOException {
-//        System.out.println(data);
-//        System.out.println(data.get("age"));
-//        System.out.println(data.get("location"));
+    public @ResponseBody String boardUpload(@RequestParam(value = "img1") MultipartFile img1,
+                                                            @RequestParam(value="img2") MultipartFile img2,
+                                                            @RequestParam(value = "img3") MultipartFile img3,
+                                                            @RequestParam("title") @RequestBody String ptitle,
+                                                            @RequestParam("keyword") @RequestBody String pkeyword,
+                                                            @RequestParam("location") @RequestBody String plocation,
+                                                            @RequestParam("num_type") @RequestBody String pnum_type,
+                                                            @RequestParam("gender") @RequestBody String pgender,
+                                                            @RequestParam("age") @RequestBody String page,
+                                                            @RequestParam(value = "user", required = false) @RequestBody String puser
+    )  throws IOException {
+
+
+
+
+        String title = ptitle;
+        String keyword = pkeyword;
+        String location = plocation;
+        String num_type = pnum_type;
+        String age = page;  //안보내줘도 될듯
+        String gender = pgender; //안보내줘도 될듯
+
+        ///게시판 추가 부분
+        Integer latest_data = boardRepository.test();
+
+        if(latest_data == null){
+            latest_data = 0;
+        }
+
+
+
+
+        Board board = new Board();
+        board.setTitle(title);
+        board.setKeyword(keyword);
+        board.setImg1("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_1.jpg");
+        board.setImg2("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_2.jpg");
+        board.setImg3("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_3.jpg");
+        board.setLocation(location);
+        board.setNum_type(num_type);
+        board.setAge(Integer.parseInt(age));
+        board.setGender(gender);
+        board.setUser(userRepository.getOne(1L));
+        board.setCreatedDateNow();
+        board.setUpdatedDateNow();
+
+        boardRepository.save(board);
+
+
+
+
+
+        /// 이미지 추가 부분
+
         int latest_id = boardRepository.test();
         System.out.println(latest_id);
         String rPath1 = s3Service.upload(img1, "board_img_" + Integer.toString(latest_id) + "_1.jpg" );
@@ -43,7 +94,8 @@ public class FileUploadController {
         System.out.println(rPath1);
         System.out.println(rPath2);
         System.out.println(rPath3);
-        return new ResponseEntity<>("rPath", HttpStatus.OK);
+
+        return "성공";
 
 
     }

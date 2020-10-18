@@ -39,31 +39,29 @@ public class BoardRestController {
         String age = boardDto.getAge();
         String gender = boardDto.getGender();
 
-        System.out.println(title + " " + keyword + " " + location + " " + num_type + " " + age + " " + gender );
-
-        Integer latest_data = boardRepository.test();
-        if(latest_data == null){
-            latest_data = 0;
-        }
-
-
-
-
-        Board board = new Board();
-        board.setTitle(title);
-        board.setKeyword(keyword);
-        board.setImg1("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_1.jpg");
-        board.setImg2("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_2.jpg");
-        board.setImg3("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_3.jpg");
-        board.setLocation(location);
-        board.setNum_type(num_type);
-        board.setAge(Integer.parseInt(age));
-        board.setGender(gender);
-        board.setUser(userRepository.getOne(boardDto.getUser()));
-        board.setCreatedDateNow();
-        board.setUpdatedDateNow();
-
-        boardRepository.save(board);
+//        Integer latest_data = boardRepository.test();
+//        if(latest_data == null){
+//            latest_data = 0;
+//        }
+//
+//
+//
+//
+//        Board board = new Board();
+//        board.setTitle(title);
+//        board.setKeyword(keyword);
+//        board.setImg1("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_1.jpg");
+//        board.setImg2("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_2.jpg");
+//        board.setImg3("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_3.jpg");
+//        board.setLocation(location);
+//        board.setNum_type(num_type);
+//        board.setAge(Integer.parseInt(age));
+//        board.setGender(gender);
+//        board.setUser(userRepository.getOne(boardDto.getUser()));
+//        board.setCreatedDateNow();
+//        board.setUpdatedDateNow();
+//
+//        boardRepository.save(board);
 
 
 
