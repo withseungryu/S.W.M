@@ -2,6 +2,7 @@ package com.example.meeting.board;
 
 import com.example.meeting.board.BoardRepository;
 import com.example.meeting.fileupload.S3Uploader;
+import com.example.meeting.filter.BoardDto;
 import com.example.meeting.user.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,28 +30,36 @@ public class BoardRestController {
     }
 
     @PostMapping(value = "/boards" )
-    public ResponseEntity<?> postBoard(@RequestParam("data") Map<String, Object> data) throws IOException {
+    public ResponseEntity<?> postBoard(@RequestBody BoardDto boardDto) throws IOException {
 
-        String title = data.get("title").toString();
-        String keyword = data.get("keyword").toString();
-        String location = data.get("location").toString();
-        String num_type = data.get("num_type").toString();
-        String age = data.get("age").toString();
-        String gender = data.get("gender").toString();
+        String title = boardDto.getTitle();
+        String keyword = boardDto.getKeyword();
+        String location = boardDto.getLocation();
+        String num_type = boardDto.getNum_type();
+        String age = boardDto.getAge();
+        String gender = boardDto.getGender();
 
         System.out.println(title + " " + keyword + " " + location + " " + num_type + " " + age + " " + gender );
+
+        Integer latest_data = boardRepository.test();
+        if(latest_data == null){
+            latest_data = 0;
+        }
+
+
+
 
         Board board = new Board();
         board.setTitle(title);
         board.setKeyword(keyword);
-        board.setImg1("/static/" + title+"1.jpg");
-        board.setImg2("/static/" + title+"2.jpg");
-        board.setImg3("/static/" + title+"3.jpg");
+        board.setImg1("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_1.jpg");
+        board.setImg2("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_2.jpg");
+        board.setImg3("/static/" + "board_img_" + Integer.toString(latest_data+1) + "_3.jpg");
         board.setLocation(location);
         board.setNum_type(num_type);
         board.setAge(Integer.parseInt(age));
         board.setGender(gender);
-        board.setUser(userRepository.getOne(1L));
+        board.setUser(userRepository.getOne(boardDto.getUser()));
         board.setCreatedDateNow();
         board.setUpdatedDateNow();
 
@@ -74,15 +83,6 @@ public class BoardRestController {
         boardRepository.deleteById(idx);
         return new ResponseEntity<>("{}", HttpStatus.OK);
     }
-
-
-
-
-
-
-
-
-
 
 
 }

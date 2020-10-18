@@ -59,7 +59,7 @@ public class UserRestController {
 
 
 
-    @PostMapping("/users/profile")
+    @PostMapping("api/users/profile")
     public @ResponseBody
     String uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile files, @RequestParam("data") Map<String, Object> data) throws IllegalStateException, IOException {
 

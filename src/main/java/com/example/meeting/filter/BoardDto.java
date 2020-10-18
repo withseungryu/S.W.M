@@ -29,6 +29,8 @@ public class BoardDto {
 
     private String gender;
 
+    private Long user;
+
     private String createdDate;
 
     private String updatedDate;

@@ -38,6 +38,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         @Query("SELECT b FROM Board b WHERE b.location like ?1 and b.num_type like ?2 and b.age <= ?3 and b.age >= ?4")
         public List<Board> getList7(String location, String num_type, int age1, int age2);
 
+        @Query("SELECT b.idx FROM Board b WHERE b.updatedDate = ( select Max(a.createdDate) from Board a )")
+        public Integer test();
+
 
 
 }

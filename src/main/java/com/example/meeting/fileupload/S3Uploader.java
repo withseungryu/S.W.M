@@ -43,8 +43,8 @@ public class S3Uploader {
     }
 
 
-    public String upload(MultipartFile file) throws IOException {
-        String fileName = "static/" + file.getOriginalFilename();
+    public String upload(MultipartFile file, String fname) throws IOException {
+        String fileName = "static/" + fname;
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
