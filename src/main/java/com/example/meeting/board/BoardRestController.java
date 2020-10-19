@@ -29,15 +29,15 @@ public class BoardRestController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping(value = "/boards" )
-    public ResponseEntity<?> postBoard(@RequestBody BoardDto boardDto) throws IOException {
-
-        String title = boardDto.getTitle();
-        String keyword = boardDto.getKeyword();
-        String location = boardDto.getLocation();
-        String num_type = boardDto.getNum_type();
-        String age = boardDto.getAge();
-        String gender = boardDto.getGender();
+//    @PostMapping(value = "/boards" )
+//    public ResponseEntity<?> postBoard(@RequestBody BoardDto boardDto) throws IOException {
+//
+//        String title = boardDto.getTitle();
+//        String keyword = boardDto.getKeyword();
+//        String location = boardDto.getLocation();
+//        String num_type = boardDto.getNum_type();
+//        String age = boardDto.getAge();
+//        String gender = boardDto.getGender();
 
 //        Integer latest_data = boardRepository.test();
 //        if(latest_data == null){
@@ -65,8 +65,8 @@ public class BoardRestController {
 
 
 
-        return new ResponseEntity<>("성공", HttpStatus.CREATED);
-    }
+//        return new ResponseEntity<>("성공", HttpStatus.CREATED);
+//    }
 
     @PutMapping("/{idx}")
     public ResponseEntity<?> putBoard(@PathVariable("idx")Long idx, @RequestBody Board board){

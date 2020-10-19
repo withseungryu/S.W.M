@@ -19,7 +19,9 @@ public class BoardDto {
 
     private String img3;
 
-    private String keyword;
+    private String tag1;
+    private String tag2;
+    private String tag3;
 
     private String location;
 

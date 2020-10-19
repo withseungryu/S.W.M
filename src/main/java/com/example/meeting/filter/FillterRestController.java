@@ -78,7 +78,9 @@ public class FillterRestController {
             boardDto.setImg1(boards.get(i).getImg1());
             boardDto.setImg2(boards.get(i).getImg2());
             boardDto.setImg3(boards.get(i).getImg3());
-            boardDto.setKeyword(boards.get(i).getKeyword());
+            boardDto.setTag1(boards.get(i).getTag1());
+            boardDto.setTag2(boards.get(i).getTag2());
+            boardDto.setTag3(boards.get(i).getTag3());
             boardDto.setLocation(boards.get(i).getLocation());
             boardDto.setNum_type(boards.get(i).getNum_type());
             boardDto.setAge(Integer.toString(boards.get(i).getAge()));

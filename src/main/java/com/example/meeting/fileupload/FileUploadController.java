@@ -36,10 +36,12 @@ public class FileUploadController {
                                                             @RequestParam(value="img2") MultipartFile img2,
                                                             @RequestParam(value = "img3") MultipartFile img3,
                                                             @RequestParam("title") @RequestBody String ptitle,
-                                                            @RequestParam("keyword") @RequestBody String pkeyword,
                                                             @RequestParam("location") @RequestBody String plocation,
                                                             @RequestParam("num_type") @RequestBody String pnum_type,
                                                             @RequestParam("gender") @RequestBody String pgender,
+                                                            @RequestParam(value="tag1", required = false) @RequestBody String ptag1,
+                                                            @RequestParam(value="tag2", required = false) @RequestBody String ptag2,
+                                                            @RequestParam(value="tag3", required = false) @RequestBody String ptag3,
                                                             @RequestParam("age") @RequestBody String page,
                                                             @RequestParam(value = "user", required = false) @RequestBody String puser
     )  throws IOException {
@@ -48,9 +50,12 @@ public class FileUploadController {
 
 
         String title = ptitle;
-        String keyword = pkeyword;
+        String tag1 = ptag1;
+        String tag2 = ptag2;
+        String tag3 = ptag3;
         String location = plocation;
         String num_type = pnum_type;
+
         String age = page;  //안보내줘도 될듯
         String gender = pgender; //안보내줘도 될듯
 
@@ -66,10 +71,12 @@ public class FileUploadController {
 
         Board board = new Board();
         board.setTitle(title);
-        board.setKeyword(keyword);
         board.setImg1("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_1.jpg");
         board.setImg2("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_2.jpg");
         board.setImg3("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_3.jpg");
+        board.setTag1(tag1);
+        board.setTag2(tag2);
+        board.setTag3(tag3);
         board.setLocation(location);
         board.setNum_type(num_type);
         board.setAge(Integer.parseInt(age));
