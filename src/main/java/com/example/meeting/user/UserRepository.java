@@ -9,6 +9,8 @@ import java.util.List;
 
 @RepositoryRestResource
 public interface UserRepository extends JpaRepository<User, Long> {
+
     public User findByEmail(String email);
     public User findByNickName(String nickName);
+    public User findByIdx(Long idx);
 }

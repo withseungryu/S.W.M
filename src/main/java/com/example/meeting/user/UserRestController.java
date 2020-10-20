@@ -5,6 +5,7 @@ import com.example.meeting.fileupload.S3Uploader;
 import com.example.meeting.kakao_oauth.OAuth;
 import com.example.meeting.kakao_oauth.OAuthToken;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +16,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@AllArgsConstructor
 @RestController
 public class UserRestController {
     private UserRepository userRepository;
+    private S3Uploader s3Uploader;
 
-
-    public UserRestController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+//    public UserRestController(UserRepository userRepository) {
+//        this.userRepository = userRepository;
+//    }
 
     @GetMapping("/auth/kakao/callback")
     public @ResponseBody
@@ -31,7 +33,7 @@ public class UserRestController {
 
         OAuthToken oauthToken = oauth.getOauthToken();
 //        oauth.deleteProfile(oauthToken);
-        oauth.getProfile(oauthToken, userRepository);
+        oauth.deleteProfile(oauthToken);
 
         return "{code: 0001, message: \"성공\"}";
     }
@@ -44,30 +46,75 @@ public class UserRestController {
 //
 //    }
 
-    @PostMapping("api/users/login")
+    @GetMapping("api/users/login")
     public @ResponseBody
-    String testTest(@RequestBody UserTest tmp){
-        User user = userRepository.findByEmail(tmp.getEmail());
+    ResponseEntity<Answer> testTest(@RequestParam(value="email", required = false) String email){
+        System.out.println(email);
+
+        User user = userRepository.findByEmail(email);
         //비밀번호도 저장한 후 만들어주자
         if(user == null){
-            return "실패";
+
+            User new_user = new User();
+            new_user.saveUser(email);
+
+
+            userRepository.save(new_user);
+
+            User a_user = userRepository.findByEmail(email);
+
+            Answer ans = new Answer();
+
+            ans.setCode("실패");
+            ans.setId(a_user.getIdx());
+
+
+            return new ResponseEntity<>(ans, HttpStatus.CREATED);
         }else{
-            return "성공";
+            Answer ans = new Answer();
+
+            ans.setCode("성공");
+            ans.setId(user.getIdx());
+
+            return new ResponseEntity<>(ans, HttpStatus.CREATED);
         }
 
     }
 
 
 
-    @PostMapping("api/users/profile")
+    @PostMapping("api/users/{id}/upload")
     public @ResponseBody
-    String uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile files, @RequestParam("data") Map<String, Object> data) throws IllegalStateException, IOException {
+    ResponseEntity uploadFile(@PathVariable("id") String idx, @RequestParam(value = "img", required=false) MultipartFile img,  @RequestParam("nickName") @RequestBody  String nickName, @RequestParam("age") @RequestBody String age ) throws IllegalStateException, IOException {
 
-        return "성공";
+        System.out.println(img);
+        System.out.println(idx);
+        System.out.println(nickName + " " +  age);
+        System.out.println(Long.parseLong(idx));
+
+        User user = userRepository.findByIdx(Long.parseLong(idx));
+        Answer_upload as = new Answer_upload();
+        as.setCode("실패");
+        if(user==null){
+            return new ResponseEntity<>(as,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        user.setImg("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "user_img_" + idx+ ".jpg");
+        user.setNickName(nickName);
+        user.setAge_range(age);
+//
+        userRepository.save(user);
+
+        String uPath = s3Uploader.upload(img, "user_img_" + idx + ".jpg" );
+        System.out.println(uPath);
+        Answer_upload as2 = new Answer_upload();
+        as.setCode("성공");
+        return new ResponseEntity<>(as2,HttpStatus.CREATED);
+
     }
 
 
-    private S3Uploader s3Service;
+
 
 //    @PostMapping("/api/users/upload")
 //    public ResponseEntity<String> userUpload(@RequestParam("file") MultipartFile file, @RequestParam("data") Map<String, Object> data) throws IOException {

@@ -28,11 +28,11 @@ public class FileUploadController {
 
     private BoardRepository boardRepository;
     private UserRepository userRepository;
-
-
     private S3Uploader s3Service;
+
+
     @PostMapping("/api/boards/upload")
-    public @ResponseBody String boardUpload(@RequestParam(value = "img1") MultipartFile img1,
+    public @ResponseBody ResponseEntity<String> boardUpload(@RequestParam(value = "img1") MultipartFile img1,
                                                             @RequestParam(value="img2") MultipartFile img2,
                                                             @RequestParam(value = "img3") MultipartFile img3,
                                                             @RequestParam("title") @RequestBody String ptitle,
@@ -102,15 +102,11 @@ public class FileUploadController {
         System.out.println(rPath2);
         System.out.println(rPath3);
 
-        return "성공";
+        return new ResponseEntity<>("성공", HttpStatus.CREATED);
 
 
     }
 
-    @PostMapping("/api/users/{id}/upload")
-    public @ResponseBody ResponseEntity<String> boardUpload(@PathVariable("id") Long idx, @RequestParam(value = "img1") MultipartFile img1)  throws IOException {
 
-        return new ResponseEntity<>(Long.toString(idx), HttpStatus.OK);
-    }
 
 }

@@ -48,4 +48,14 @@ public class User implements Serializable {
         this.age_range = age_range;
         this.birth = birth;
     }
+
+    public void saveUser(String email){
+        this.nickName = "";
+        this.img="";
+        this.gender = "";
+        this.age_range = "";
+        this.birth = "";
+        this.email = email;
+    }
+
 }
