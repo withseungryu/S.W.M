@@ -2,6 +2,7 @@ package com.example.meeting.board;
 
 
 import com.example.meeting.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,7 +65,7 @@ public class Board implements Serializable {
     @Column
     private Timestamp updatedDate;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user")
     private User user;
 

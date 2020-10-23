@@ -5,26 +5,19 @@ import com.example.meeting.fileupload.S3Uploader;
 import com.example.meeting.kakao_oauth.OAuth;
 import com.example.meeting.kakao_oauth.OAuthToken;
 
+import com.sun.net.httpserver.Authenticator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @AllArgsConstructor
 @RestController
 public class UserRestController {
     private UserRepository userRepository;
     private S3Uploader s3Uploader;
-
-//    public UserRestController(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
 
     @GetMapping("/auth/kakao/callback")
     public @ResponseBody
@@ -38,63 +31,42 @@ public class UserRestController {
         return "{code: 0001, message: \"성공\"}";
     }
 
-
-
-//    @GetMapping("/test/user1")
-//    public @ResponseBody String testtt(@RequestParam(value="email") String email, @RequestParam(value="password") String password){
-//        return email + "안녕";
-//
-//    }
-
     @GetMapping("api/users/login")
     public @ResponseBody
-    ResponseEntity<Answer> testTest(@RequestParam(value="email", required = false) String email){
+    ResponseEntity<CheckAnswer> checkLogin(@RequestParam(value="email", required = false) String email){
         System.out.println(email);
 
         User user = userRepository.findByEmail(email);
         //비밀번호도 저장한 후 만들어주자
+        CheckAnswer ans = new CheckAnswer();
         if(user == null){
 
-            User new_user = new User();
-            new_user.saveUser(email);
+            ans.setCheckAnswer(200, "Success", false);
 
-
-            userRepository.save(new_user);
-
-            User a_user = userRepository.findByEmail(email);
-
-            Answer ans = new Answer();
-
-            ans.setCode("실패");
-            ans.setId(a_user.getIdx());
-
-
-            return new ResponseEntity<>(ans, HttpStatus.CREATED);
+            return new ResponseEntity<>(ans, HttpStatus.OK);
         }else{
-            Answer ans = new Answer();
 
-            ans.setCode("성공");
-            ans.setId(user.getIdx());
+            ans.setCheckAnswer(200, "Success", true);
 
-            return new ResponseEntity<>(ans, HttpStatus.CREATED);
+            return new ResponseEntity<>(ans, HttpStatus.OK);
         }
 
     }
 
 
 
-    @PostMapping("api/users/{id}/upload")
+    @PostMapping("api/users")
     public @ResponseBody
-    ResponseEntity uploadFile(@PathVariable("id") String idx, @RequestParam(value = "img", required=false) MultipartFile img,  @RequestParam("nickName") @RequestBody  String nickName, @RequestParam("age") @RequestBody String age ) throws IllegalStateException, IOException {
+    ResponseEntity uploadFile(@PathVariable("id") String idx, @RequestParam("email") String email, @RequestParam("nickName") @RequestBody  String nickName, @RequestParam("age") @RequestBody String age ) throws IllegalStateException, IOException {
 
-        System.out.println(img);
+//        System.out.println(img);
         System.out.println(idx);
         System.out.println(nickName + " " +  age);
         System.out.println(Long.parseLong(idx));
 
-        User user = userRepository.findByIdx(Long.parseLong(idx));
-        Answer_upload as = new Answer_upload();
-        as.setCode("실패");
+        User user = userRepository.findByEmail(email);
+        Answer as = new Answer();
+        as.setAnswer(400, "Fail");
         if(user==null){
             return new ResponseEntity<>(as,HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -105,10 +77,10 @@ public class UserRestController {
 //
         userRepository.save(user);
 
-        String uPath = s3Uploader.upload(img, "user_img_" + idx + ".jpg" );
-        System.out.println(uPath);
-        Answer_upload as2 = new Answer_upload();
-        as.setCode("성공");
+//        String uPath = s3Uploader.upload(img, "user_img_" + idx + ".jpg" );
+//        System.out.println(uPath);
+        Answer as2 = new Answer();
+        as.setAnswer(200, "Success");
         return new ResponseEntity<>(as2,HttpStatus.CREATED);
 
     }
