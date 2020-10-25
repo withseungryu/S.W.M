@@ -41,12 +41,12 @@ public class UserRestController {
         CheckAnswer ans = new CheckAnswer();
         if(user == null){
 
-            ans.setCheckAnswer(200, "Success", false);
+            ans.setCheckAnswer(200, "Success", false, 0L);
 
             return new ResponseEntity<>(ans, HttpStatus.OK);
         }else{
 
-            ans.setCheckAnswer(200, "Success", true);
+            ans.setCheckAnswer(200, "Success", true, user.getIdx());
 
             return new ResponseEntity<>(ans, HttpStatus.OK);
         }

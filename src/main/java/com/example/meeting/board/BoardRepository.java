@@ -14,6 +14,7 @@ import java.util.List;
 @RepositoryRestResource
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
+        public Board findByIdx(Long idx);
 //    public List<Board> findByLocationAndNum_typeAndAgeLessThanEqualAndAgeGreaterThanEqual(String location, String num_type, int age1, int age2);
         public Page<Board> findAll(Pageable pageable);
 

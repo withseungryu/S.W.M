@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.*;
+import java.util.List;
 
 
 @RestController
@@ -26,7 +27,7 @@ public class BoardRestController {
 
 
     @GetMapping
-    public ResponseEntity getBoard(final Pageable pageable, @RequestParam(value = "location", required = false) String location, @RequestParam(value ="num_type" ,required = false) String num_type, @RequestParam(value ="age", required = false) String age) throws IOException{
+    public ResponseEntity<List<Board>> getBoard(final Pageable pageable, @RequestParam(value = "location", required = false) String location, @RequestParam(value ="num_type" ,required = false) String num_type, @RequestParam(value ="age", required = false) String age) throws IOException{
 
         Page<Board> boards;
 
@@ -69,9 +70,9 @@ public class BoardRestController {
             boards = boardRepository.getList7(location, num_type, age1, age2, pageable);
         }
 
+        List<Board> board = boards.getContent();
 
-
-        return new ResponseEntity<>(boards, HttpStatus.OK);
+        return new ResponseEntity<>(board, HttpStatus.OK);
 
 
     }
@@ -156,6 +157,12 @@ public class BoardRestController {
 
     }
 
+    @GetMapping("/{idx}")
+    public ResponseEntity<Board> putBoard(@PathVariable("idx")Long idx){
+        Board board = boardRepository.findByIdx(idx);
+
+        return new ResponseEntity<>(board, HttpStatus.OK);
+    }
     @PutMapping("/{idx}")
     public ResponseEntity<?> putBoard(@PathVariable("idx")Long idx, @RequestBody Board board){
         Board persistBoard = boardRepository.getOne(idx);
