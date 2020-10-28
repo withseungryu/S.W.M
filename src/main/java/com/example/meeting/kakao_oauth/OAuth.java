@@ -104,8 +104,8 @@ public class OAuth {
         user.setNickName(profile.getProperties().getNickname());
         user.setEmail(profile.getKakao_account().getEmail());
         user.setGender(profile.getKakao_account().getGender());
-        user.setAge_range(profile.getKakao_account().getAge_range());
-        user.setBirth(profile.getKakao_account().getBirthday());
+        user.setAge(profile.getKakao_account().getAge_range());
+//        user.setBirth(profile.getKakao_account().getBirthday());
 
         userRepository.save(user);
         System.out.println(profile);

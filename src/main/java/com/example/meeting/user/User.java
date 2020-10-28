@@ -32,30 +32,38 @@ public class User implements Serializable {
     private String gender;
 
     @Column
-    private String age_range;
+    private String age;
 
     @Column
-    private String birth;
+    private String location;
+
+    @Column
+    private String kakao_id;
+
+    @Column
+    private int point;
 
 
     @Builder
-    public User(String nickName, String img, String email, String gender, String age_range, String birth){
+    public User(String nickName, String img, String email, String gender, String age,  String location, String kakao_id, int point){
         this.nickName = nickName;
 //        this.password = password;
         this.img = img;
         this.email = email;
         this.gender = gender;
-        this.age_range = age_range;
-        this.birth = birth;
+        this.age = age;
+        this.location = location;
+        this.kakao_id = kakao_id;
+        this.point = point;
     }
 
     public void saveUser(String email){
         this.nickName = "";
         this.img="";
         this.gender = "";
-        this.age_range = "";
-        this.birth = "";
+        this.age = "";
         this.email = email;
+
     }
 
 }

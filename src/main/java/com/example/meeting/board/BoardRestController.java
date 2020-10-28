@@ -1,11 +1,12 @@
 package com.example.meeting.board;
 
 import com.example.meeting.fileupload.S3Uploader;
-import com.example.meeting.user.Answer;
+import com.example.meeting.board.Answer;
 import com.example.meeting.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class BoardRestController {
 
 
     @GetMapping
-    public ResponseEntity<List<Board>> getBoard(final Pageable pageable, @RequestParam(value = "location", required = false) String location, @RequestParam(value ="num_type" ,required = false) String num_type, @RequestParam(value ="age", required = false) String age) throws IOException{
+    public ResponseEntity<List<Board>> getBoard(@PageableDefault(size=10, page= 1) Pageable pageable, @RequestParam(value = "location", required = false) String location, @RequestParam(value ="num_type" ,required = false) String num_type, @RequestParam(value ="age", required = false) String age) throws IOException{
 
         Page<Board> boards;
 
@@ -70,8 +71,8 @@ public class BoardRestController {
             boards = boardRepository.getList7(location, num_type, age1, age2, pageable);
         }
 
-        List<Board> board = boards.getContent();
 
+        List<Board> board = boards.getContent();
         return new ResponseEntity<>(board, HttpStatus.OK);
 
 
@@ -89,7 +90,7 @@ public class BoardRestController {
                                                             @RequestParam(value="tag1", required = false) @RequestBody String ptag1,
                                                             @RequestParam(value="tag2", required = false) @RequestBody String ptag2,
                                                             @RequestParam(value="tag3", required = false) @RequestBody String ptag3,
-                                                            @RequestParam("age") @RequestBody String page,
+                                                            @RequestParam("average_age") @RequestBody String page,
                                                             @RequestParam(value = "user", required = false) @RequestBody String puser
     )  throws IOException {
 
