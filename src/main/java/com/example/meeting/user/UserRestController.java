@@ -33,12 +33,12 @@ public class UserRestController {
         return "{code: 0001, message: \"성공\"}";
     }
 
-    @GetMapping("api/users/login")
+    @PostMapping("api/users/login")
     public @ResponseBody
-    ResponseEntity<CheckAnswer> checkLogin(@RequestParam(value="email", required = false) String email){
-        System.out.println(email);
+    ResponseEntity<CheckAnswer> checkLogin(@RequestBody LoginEmail loginEmail){
 
-        User user = userRepository.findByEmail(email);
+
+        User user = userRepository.findByEmail(loginEmail.getEmail());
         //비밀번호도 저장한 후 만들어주자
         CheckAnswer ans = new CheckAnswer();
         if(user == null){

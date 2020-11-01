@@ -15,5 +15,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query("SELECT m FROM Bookmark m WHERE m.user = ?1 AND m.board = ?2")
     public Bookmark deleteGet(User user, Board board);
     public List<Bookmark> findByUser(User user);
+    
+   
 
 }

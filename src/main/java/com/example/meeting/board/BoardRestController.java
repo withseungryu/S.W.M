@@ -1,5 +1,6 @@
 package com.example.meeting.board;
 
+import com.example.meeting.bookmark.Bookmark;
 import com.example.meeting.fileupload.S3Uploader;
 import com.example.meeting.board.Answer;
 import com.example.meeting.user.UserRepository;
@@ -14,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -26,19 +29,18 @@ public class BoardRestController {
     private UserRepository userRepository;
     private S3Uploader s3Uploader;
 
-
     @GetMapping
-    public ResponseEntity<List<Board>> getBoard(@PageableDefault(size=10, page= 1) Pageable pageable, @RequestParam(value = "location", required = false) String location, @RequestParam(value ="num_type" ,required = false) String num_type, @RequestParam(value ="age", required = false) String age) throws IOException{
+    public ResponseEntity<List<TestDto>> getBoard(@PageableDefault(size=10, page= 1) Pageable pageable, @RequestParam(value = "location", required = false) String location, @RequestParam(value ="num_type" ,required = false) String num_type, @RequestParam(value ="age", required = false) String age) throws IOException{
 
-        Page<Board> boards;
+        Page<Object[]> boards;
 
         if(location == null && num_type == null && age == null){
-            boards = boardRepository.findAll(pageable);
+            boards = boardRepository.getfindAll(pageable);
         }
 
         else if(location.equals("상관없음") && num_type.equals("상관없음") && age.equals("상관없음")){
             System.out.println("1");
-            boards = boardRepository.findAll(pageable);
+            boards = boardRepository.getfindAll(pageable);
         }else if(location.equals("상관없음") && num_type.equals("상관없음")){
             System.out.println("2");
             int age1 = Integer.parseInt(age) +3;
@@ -71,11 +73,75 @@ public class BoardRestController {
             boards = boardRepository.getList7(location, num_type, age1, age2, pageable);
         }
 
+        List<TestDto> adaBoard = adaBookmark(boards.getContent());
 
-        List<Board> board = boards.getContent();
-        return new ResponseEntity<>(board, HttpStatus.OK);
+        return new ResponseEntity<>(adaBoard, HttpStatus.OK);
 
 
+    }
+
+    public List<TestDto> adaBookmark(List<Object[]> tmp){
+        List<TestDto> boards = new ArrayList<>();
+        TestDto be_board = new TestDto();
+        Long saveIdx = 0L;
+        boolean ok = false;
+        boolean chk = false;
+        for(Object[] o : tmp){
+            TestDto board = new TestDto();
+            Board b = (Board)o[0];
+            Bookmark m = (Bookmark)o[1];
+
+            if (saveIdx != b.getIdx()) {
+                if(!chk){
+
+                    TestDto tmpBoard = new TestDto();
+                    tmpBoard.cloneBoard(be_board);
+
+                    boards.add(tmpBoard);
+                    for(int i=0; i<boards.size(); ++i){
+                        System.out.println(boards.get(i).getImg1());
+                    }
+                }else{
+                    chk = false;
+                }
+                saveIdx = b.getIdx();
+
+                ok = false;
+            }else{
+                if(ok){
+                    continue;
+                }
+            }
+
+            if(m == null){
+
+                be_board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
+                        b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
+                );
+                continue;
+            }
+
+            if(!ok && b.getUser().getIdx() == m.getUser().getIdx()){
+
+                board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
+                        b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
+                );
+                boards.add(board);
+
+                chk = true;
+                ok = true;
+            }else {
+                be_board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
+                        b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
+                );
+            }
+
+        }
+        boards.remove(0);
+        return boards;
     }
 
 
