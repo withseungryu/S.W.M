@@ -3,8 +3,7 @@ package com.example.meeting.user;
 
 import com.example.meeting.board.Board;
 import com.example.meeting.fileupload.S3Uploader;
-import com.example.meeting.kakao_oauth.OAuth;
-import com.example.meeting.kakao_oauth.OAuthToken;
+
 
 import com.sun.net.httpserver.Authenticator;
 import lombok.AllArgsConstructor;
@@ -21,17 +20,17 @@ public class UserRestController {
     private UserRepository userRepository;
     private S3Uploader s3Uploader;
 
-    @GetMapping("/auth/kakao/callback")
-    public @ResponseBody
-    String kakaoCallback(String code) { //@ResponseBody를 붙이는 이유 : Data를 리턴해주는 컨트롤러 간ㄷ된다.
-        OAuth oauth= new OAuth(code);
-
-        OAuthToken oauthToken = oauth.getOauthToken();
+//    @GetMapping("/auth/kakao/callback")
+//    public @ResponseBody
+//    String kakaoCallback(String code) { //@ResponseBody를 붙이는 이유 : Data를 리턴해주는 컨트롤러 간ㄷ된다.
+//        OAuth oauth= new OAuth(code);
+//
+//        OAuthToken oauthToken = oauth.getOauthToken();
+////        oauth.deleteProfile(oauthToken);
 //        oauth.deleteProfile(oauthToken);
-        oauth.deleteProfile(oauthToken);
-
-        return "{code: 0001, message: \"성공\"}";
-    }
+//
+//        return "{code: 0001, message: \"성공\"}";
+//    }
 
     @PostMapping("api/users/login")
     public @ResponseBody
@@ -60,17 +59,13 @@ public class UserRestController {
     public @ResponseBody
     ResponseEntity uploadFile(@RequestParam(value = "img") MultipartFile img, @RequestParam("email") String email, @RequestParam("nickName") @RequestBody  String nickName, @RequestParam("age") @RequestBody String age,  @RequestParam("location") @RequestBody String location,  @RequestParam("kakao_id") @RequestBody String kakao_id ) throws IllegalStateException, IOException {
 
-        System.out.println(email);
-        System.out.println(nickName + " " +  age);
-
-
         User user = new User();
 
         Answer as = new Answer();
         as.setAnswer(400, "Fail", 0L);
 
         user.setEmail(email);
-        user.setImg("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "user_img_" + email+ ".jpg");
+        user.setImg("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "user_img_" + email+ ".jpg");
         user.setNickName(nickName);
         user.setAge(age);
         user.setLocation(location);
@@ -92,24 +87,6 @@ public class UserRestController {
 
 
 
-
-//    @PostMapping("/api/users/upload")
-//    public ResponseEntity<String> userUpload(@RequestParam("file") MultipartFile file, @RequestParam("data") Map<String, Object> data) throws IOException {
-//
-//
-//        UserDto userDto = new UserDto();
-//        userDto.setUser_id(data.get("user_id").toString());
-//        userDto.setNickname(data.get("nickname").toString());
-//
-//        User persistUser = userRepository.getOne(Long.parseLong(userDto.getUser_id()));
-//
-//        persistUser.setImg(s3Service.upload(file, userDto.getUser_id()));
-//        persistUser.setNickName(userDto.getNickname());
-//
-//        userRepository.save(persistUser);
-//
-//        return new ResponseEntity<>("성공", HttpStatus.OK); // S3 bucket의 static/ 폴더를 지정한 것.
-//    }
 
 
 }

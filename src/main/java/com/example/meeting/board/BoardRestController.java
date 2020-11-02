@@ -2,7 +2,6 @@ package com.example.meeting.board;
 
 import com.example.meeting.bookmark.Bookmark;
 import com.example.meeting.fileupload.S3Uploader;
-import com.example.meeting.board.Answer;
 import com.example.meeting.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -30,7 +28,12 @@ public class BoardRestController {
     private S3Uploader s3Uploader;
 
     @GetMapping
-    public ResponseEntity<List<TestDto>> getBoard(@PageableDefault(size=10, page= 1) Pageable pageable, @RequestParam(value = "location", required = false) String location, @RequestParam(value ="num_type" ,required = false) String num_type, @RequestParam(value ="age", required = false) String age) throws IOException{
+    public ResponseEntity<List<BoardDto>> getBoard(Pageable pageable,
+                                                   @RequestParam(value = "location", required = false) String location,
+                                                   @RequestParam(value ="num_type" ,required = false) String num_type,
+                                                   @RequestParam(value ="age", required = false) String age,
+                                                   @RequestParam(value = "userId", required = false) Long userId
+    ) throws IOException{
 
         Page<Object[]> boards;
 
@@ -73,34 +76,40 @@ public class BoardRestController {
             boards = boardRepository.getList7(location, num_type, age1, age2, pageable);
         }
 
-        List<TestDto> adaBoard = adaBookmark(boards.getContent());
+
+        List<BoardDto> adaBoard = adaBookmark(boards.getContent(), userId);
 
         return new ResponseEntity<>(adaBoard, HttpStatus.OK);
 
 
     }
 
-    public List<TestDto> adaBookmark(List<Object[]> tmp){
-        List<TestDto> boards = new ArrayList<>();
-        TestDto be_board = new TestDto();
+    public List<BoardDto> adaBookmark(List<Object[]> tmp, Long userId){
+        List<BoardDto> boards = new ArrayList<>();
+        BoardDto be_board = new BoardDto();
         Long saveIdx = 0L;
         boolean ok = false;
         boolean chk = false;
+        boolean last_chk = false;
+        int ch_idx = 0;
+
+        System.out.println(tmp.size());
         for(Object[] o : tmp){
-            TestDto board = new TestDto();
+            ch_idx++;
+
+            BoardDto board = new BoardDto();
             Board b = (Board)o[0];
             Bookmark m = (Bookmark)o[1];
+            System.out.println(ch_idx);
 
             if (saveIdx != b.getIdx()) {
                 if(!chk){
 
-                    TestDto tmpBoard = new TestDto();
+                    BoardDto tmpBoard = new BoardDto();
                     tmpBoard.cloneBoard(be_board);
 
                     boards.add(tmpBoard);
-                    for(int i=0; i<boards.size(); ++i){
-                        System.out.println(boards.get(i).getImg1());
-                    }
+
                 }else{
                     chk = false;
                 }
@@ -119,24 +128,43 @@ public class BoardRestController {
                         b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
                         b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
                 );
+                if(tmp.size() == ch_idx){
+                    if(!last_chk){
+                        BoardDto tmpBoard = new BoardDto();
+                        tmpBoard.cloneBoard(be_board);
+
+                        boards.add(tmpBoard);
+                    }
+
+                }
                 continue;
             }
 
-            if(!ok && b.getUser().getIdx() == m.getUser().getIdx()){
+            if(!ok && userId == m.getUser().getIdx()){
 
                 board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
                         b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
                         b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
                 );
                 boards.add(board);
-
+                last_chk = true;
                 chk = true;
                 ok = true;
             }else {
+
                 be_board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
                         b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
                         b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
                 );
+            }
+
+            if(tmp.size() == ch_idx){
+                if(!last_chk){
+                    BoardDto tmpBoard = new BoardDto();
+                    tmpBoard.cloneBoard(be_board);
+
+                    boards.add(tmpBoard);
+                }
             }
 
         }
@@ -185,9 +213,9 @@ public class BoardRestController {
 
         Board board = new Board();
         board.setTitle(title);
-        board.setImg1("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_1.jpg");
-        board.setImg2("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_2.jpg");
-        board.setImg3("https://swmbucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_3.jpg");
+        board.setImg1("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_1.jpg");
+        board.setImg2("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_2.jpg");
+        board.setImg3("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_3.jpg");
         board.setTag1(tag1);
         board.setTag2(tag2);
         board.setTag3(tag3);

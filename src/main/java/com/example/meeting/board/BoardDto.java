@@ -1,15 +1,12 @@
 package com.example.meeting.board;
 
 import com.example.meeting.user.User;
-import com.fasterxml.jackson.databind.ser.std.TimeZoneSerializer;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Data
-public class TestDto {
+public class BoardDto {
 
     private Long idx;
 
@@ -69,23 +66,23 @@ public class TestDto {
         this.check = check;
     }
 
-    public void cloneBoard(TestDto testDto){
-        this.idx = testDto.getIdx();
-        this.title = testDto.getTitle();
-        this.img1 = testDto.getImg1();
-        this.img2 = testDto.getImg2();
-        this.img3 = testDto.getImg3();
-        this.tag1 = testDto.getTag1();
-        this.tag2 = testDto.getTag2();
-        this.tag3 = testDto.getTag3();
-        this.location = testDto.getLocation();
-        this.num_type = testDto.getNum_type();;
-        this.age = testDto.getAge();;
-        this.gender = testDto.getGender();;
-        this.createdDate = testDto.getCreatedDate();
-        this.updatedDate = testDto.getUpdatedDate();;
-        this.user = testDto.getUser();
-        this.check = testDto.check;
+    public void cloneBoard(BoardDto boardDto){
+        this.idx = boardDto.getIdx();
+        this.title = boardDto.getTitle();
+        this.img1 = boardDto.getImg1();
+        this.img2 = boardDto.getImg2();
+        this.img3 = boardDto.getImg3();
+        this.tag1 = boardDto.getTag1();
+        this.tag2 = boardDto.getTag2();
+        this.tag3 = boardDto.getTag3();
+        this.location = boardDto.getLocation();
+        this.num_type = boardDto.getNum_type();;
+        this.age = boardDto.getAge();;
+        this.gender = boardDto.getGender();;
+        this.createdDate = boardDto.getCreatedDate();
+        this.updatedDate = boardDto.getUpdatedDate();;
+        this.user = boardDto.getUser();
+        this.check = boardDto.check;
     }
 
 }

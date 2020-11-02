@@ -5,12 +5,15 @@ import com.example.meeting.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table
@@ -29,7 +32,7 @@ public class Matched implements Serializable {
     @JoinColumn(name= "sender")
     private User sender;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="list_id")
     private Board board;
 
@@ -48,5 +51,9 @@ public class Matched implements Serializable {
         this.createdTime = createdTime;
     }
 
+    public void setCreatedDateNow(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        this.createdTime = Timestamp.valueOf(localDateTime);
+    }
 
 }
