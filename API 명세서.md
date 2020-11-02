@@ -73,7 +73,7 @@ POST /api/boards
 
 
 ```http
-GET api/users/login
+POST api/users/login
 ```
 
 
