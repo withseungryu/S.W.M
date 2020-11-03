@@ -2,6 +2,7 @@ package com.example.meeting.board;
 
 import com.example.meeting.bookmark.Bookmark;
 import com.example.meeting.fileupload.S3Uploader;
+import com.example.meeting.user.User;
 import com.example.meeting.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,48 +37,54 @@ public class BoardRestController {
     ) throws IOException{
 
         Page<Object[]> boards;
+        User user = userRepository.findByIdx(userId);
 
         if(location == null && num_type == null && age == null){
-            boards = boardRepository.getfindAll(pageable);
+            System.out.println("fd");
+            boards = boardRepository.getfindAll(user, pageable);
         }
 
         else if(location.equals("상관없음") && num_type.equals("상관없음") && age.equals("상관없음")){
             System.out.println("1");
-            boards = boardRepository.getfindAll(pageable);
+            boards = boardRepository.getfindAll(user, pageable);
         }else if(location.equals("상관없음") && num_type.equals("상관없음")){
             System.out.println("2");
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
-            boards = boardRepository.getList3(age1, age2, pageable);
+            boards = boardRepository.getList3(age1, age2, user, pageable);
         }else if(location.equals("상관없음") && age.equals("상관없음")){
             System.out.println("3");
-            boards = boardRepository.getList2(num_type, pageable);
+            boards = boardRepository.getList2(num_type, user, pageable);
         }else if(age.equals("상관없음") && num_type.equals("상관없음")){
             System.out.println("4");
-            boards = boardRepository.getList1(location, pageable);
+            boards = boardRepository.getList1(location, user, pageable);
         }else if(location.equals("상관없음")){
             System.out.println("5");
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
-            boards = boardRepository.getList6(num_type, age1, age2, pageable);
+            boards = boardRepository.getList6(num_type, age1, age2, user, pageable);
         }else if(num_type.equals("상관없음")){
             System.out.println("6");
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
-            boards = boardRepository.getList5(location, age1,age2, pageable);
+            boards = boardRepository.getList5(location, age1,age2, user, pageable);
 
         }else if(age.equals("상관없음")){
             System.out.println("7");
-            boards = boardRepository.getList4(location, num_type, pageable);
+            boards = boardRepository.getList4(location, num_type, user, pageable);
         }else{
-            System.out.println("8");
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
-            boards = boardRepository.getList7(location, num_type, age1, age2, pageable);
+            boards = boardRepository.getList7(location, num_type, age1, age2, user, pageable);
         }
 
 
+        if(boards.getContent().size()==0){
+            List<BoardDto> adaBoard = new ArrayList<>();
+            return new ResponseEntity<>(adaBoard, HttpStatus.OK);
+        }
         List<BoardDto> adaBoard = adaBookmark(boards.getContent(), userId);
+
 
         return new ResponseEntity<>(adaBoard, HttpStatus.OK);
 
@@ -85,6 +92,7 @@ public class BoardRestController {
     }
 
     public List<BoardDto> adaBookmark(List<Object[]> tmp, Long userId){
+
         List<BoardDto> boards = new ArrayList<>();
         BoardDto be_board = new BoardDto();
         Long saveIdx = 0L;
@@ -92,83 +100,29 @@ public class BoardRestController {
         boolean chk = false;
         boolean last_chk = false;
         int ch_idx = 0;
-
-        System.out.println(tmp.size());
-        for(Object[] o : tmp){
-            ch_idx++;
+        for(Object[] o : tmp) {
 
             BoardDto board = new BoardDto();
-            Board b = (Board)o[0];
-            Bookmark m = (Bookmark)o[1];
-            System.out.println(ch_idx);
+            Board b = (Board) o[0];
+            Bookmark m = (Bookmark) o[1];
 
-            if (saveIdx != b.getIdx()) {
-                if(!chk){
-
-                    BoardDto tmpBoard = new BoardDto();
-                    tmpBoard.cloneBoard(be_board);
-
-                    boards.add(tmpBoard);
-
-                }else{
-                    chk = false;
-                }
-                saveIdx = b.getIdx();
-
-                ok = false;
-            }else{
-                if(ok){
-                    continue;
-                }
-            }
-
-            if(m == null){
-
-                be_board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+            if(m==null){
+                board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
                         b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
                         b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
                 );
-                if(tmp.size() == ch_idx){
-                    if(!last_chk){
-                        BoardDto tmpBoard = new BoardDto();
-                        tmpBoard.cloneBoard(be_board);
 
-                        boards.add(tmpBoard);
-                    }
-
-                }
-                continue;
-            }
-
-            if(!ok && userId == m.getUser().getIdx()){
-
+            }else{
                 board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
                         b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
                         b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
                 );
-                boards.add(board);
-                last_chk = true;
-                chk = true;
-                ok = true;
-            }else {
-
-                be_board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
-                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
-                        b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
-                );
             }
-
-            if(tmp.size() == ch_idx){
-                if(!last_chk){
-                    BoardDto tmpBoard = new BoardDto();
-                    tmpBoard.cloneBoard(be_board);
-
-                    boards.add(tmpBoard);
-                }
-            }
+            BoardDto tmpBoard = new BoardDto();
+            tmpBoard.cloneBoard(board);
+            boards.add(tmpBoard);
 
         }
-        boards.remove(0);
         return boards;
     }
 
