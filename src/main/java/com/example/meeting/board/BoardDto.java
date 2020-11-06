@@ -3,6 +3,7 @@ package com.example.meeting.board;
 import com.example.meeting.user.User;
 import lombok.Data;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -28,13 +29,17 @@ public class BoardDto {
     private String tag3;
 
 
-    private String location;
+    private String location1;
+
+    private String location2;
 
     private String num_type;
 
     private int age;
 
     private String gender;
+
+    private Date date;
 
     private Timestamp createdDate;
 
@@ -45,7 +50,8 @@ public class BoardDto {
     public boolean check;
 
     public void setBookAll(Long idx, String title, String img1, String img2, String img3, String tag1, String tag2,
-                  String tag3, String location, String num_type, int age, String gender, Timestamp createdDate,
+                  String tag3, String location1, String location2,  String num_type, int age, String gender,
+                           Date date, Timestamp createdDate,
                   Timestamp updatedDate, User user, boolean check){
 
         this.idx = idx;
@@ -56,10 +62,12 @@ public class BoardDto {
         this.tag1 = tag1;
         this.tag2 = tag2;
         this.tag3 = tag3;
-        this.location =location;
+        this.location1 =location1;
+        this.location2 = location2;
         this.num_type = num_type;
         this.age = age;
         this.gender = gender;
+        this.date =date;
         this.createdDate =createdDate;
         this.updatedDate = updatedDate;
         this.user = user;
@@ -75,10 +83,12 @@ public class BoardDto {
         this.tag1 = boardDto.getTag1();
         this.tag2 = boardDto.getTag2();
         this.tag3 = boardDto.getTag3();
-        this.location = boardDto.getLocation();
+        this.location1 = boardDto.getLocation1();
+        this.location2 = boardDto.getLocation2();
         this.num_type = boardDto.getNum_type();;
-        this.age = boardDto.getAge();;
-        this.gender = boardDto.getGender();;
+        this.age = boardDto.getAge();
+        this.gender = boardDto.getGender();
+        this.date =boardDto.getDate();
         this.createdDate = boardDto.getCreatedDate();
         this.updatedDate = boardDto.getUpdatedDate();;
         this.user = boardDto.getUser();

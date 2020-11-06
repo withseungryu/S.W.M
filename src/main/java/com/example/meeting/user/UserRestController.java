@@ -1,21 +1,24 @@
 package com.example.meeting.user;
 
 
-import com.example.meeting.board.Board;
 import com.example.meeting.fileupload.S3Uploader;
 
 
-import com.sun.net.httpserver.Authenticator;
+import com.example.meeting.jwt.JwtService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @AllArgsConstructor
 @RestController
+@Slf4j
 public class UserRestController {
     private UserRepository userRepository;
     private S3Uploader s3Uploader;
@@ -32,14 +35,21 @@ public class UserRestController {
 //        return "{code: 0001, message: \"성공\"}";
 //    }
 
+
+    private JwtService jwtService = new JwtService();
+
+
     @PostMapping("api/users/login")
     public @ResponseBody
-    ResponseEntity<CheckAnswer> checkLogin(@RequestBody LoginEmail loginEmail){
+    ResponseEntity<CheckAnswer> checkLogin(@RequestBody LoginEmail loginEmail, HttpServletResponse res){
 
 
         User user = userRepository.findByEmail(loginEmail.getEmail());
+        String token = jwtService.create(user);
+
         //비밀번호도 저장한 후 만들어주자
         CheckAnswer ans = new CheckAnswer();
+        res.setHeader("jwt-auth-token", token);
         if(user == null){
             ans.setCheckAnswer(200, "Success", false, 0L);
             return new ResponseEntity<>(ans, HttpStatus.OK);

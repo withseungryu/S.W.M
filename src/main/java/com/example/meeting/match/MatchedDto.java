@@ -6,4 +6,5 @@ import lombok.Data;
 public class MatchedDto {
     Long boardId;
     Long senderId;
+    Boolean status;
 }

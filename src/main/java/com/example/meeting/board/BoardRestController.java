@@ -6,6 +6,8 @@ import com.example.meeting.user.User;
 import com.example.meeting.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.*;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,52 +35,73 @@ public class BoardRestController {
 
     @GetMapping
     public ResponseEntity<List<BoardDto>> getBoard(Pageable pageable,
-                                                   @RequestParam(value = "location", required = false) String location,
+                                                   @RequestParam(value = "location1", required = false) String location1,
+                                                   @RequestParam(value = "location2", required = false) String location2,
                                                    @RequestParam(value ="num_type" ,required = false) String num_type,
                                                    @RequestParam(value ="age", required = false) String age,
-                                                   @RequestParam(value = "userId", required = false) Long userId
+                                                   @RequestParam(value = "userId", required = false) Long userId,
+                                                   @RequestParam(value="date", required = false) String sdate
     ) throws IOException{
 
         Page<Object[]> boards;
         User user = userRepository.findByIdx(userId);
 
-        if(location == null && num_type == null && age == null){
+        System.out.println(num_type + age + location1);
+        System.out.println(location2);
+
+        if(location1 == null && location2 == null && num_type == null && age == null){
             System.out.println("fd");
             boards = boardRepository.getfindAll(user, pageable);
         }
 
-        else if(location.equals("상관없음") && num_type.equals("상관없음") && age.equals("상관없음")){
-            System.out.println("1");
+        else if(location1.equals("상관없음") && location2.equals("상관없음") && num_type.equals("상관없음") && age.equals("상관없음")){
             boards = boardRepository.getfindAll(user, pageable);
-        }else if(location.equals("상관없음") && num_type.equals("상관없음")){
-            System.out.println("2");
+        }else if(location1.equals("상관없음") && location2.equals("상관없음") && num_type.equals("상관없음")){
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
             boards = boardRepository.getList3(age1, age2, user, pageable);
-        }else if(location.equals("상관없음") && age.equals("상관없음")){
+        }else if(location1.equals("상관없음") && location2.equals("상관없음") && age.equals("상관없음")){
             System.out.println("3");
             boards = boardRepository.getList2(num_type, user, pageable);
-        }else if(age.equals("상관없음") && num_type.equals("상관없음")){
-            System.out.println("4");
-            boards = boardRepository.getList1(location, user, pageable);
-        }else if(location.equals("상관없음")){
+        }
+        else if(age.equals("상관없음") && num_type.equals("상관없음")){
+            if(location2.equals("상관없음")){
+                boards = boardRepository.getList8(location1, user, pageable);
+            }else{
+                boards = boardRepository.getList1(location1, location2, user, pageable);
+            }
+
+        }else if(location1.equals("상관없음") && location2.equals("상관없음")){
             System.out.println("5");
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
             boards = boardRepository.getList6(num_type, age1, age2, user, pageable);
         }else if(num_type.equals("상관없음")){
-            System.out.println("6");
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
-            boards = boardRepository.getList5(location, age1,age2, user, pageable);
+            if(location2.equals("상관없음")) {
+                boards = boardRepository.getList9(location1, age1, age2, user, pageable);
+            }else{
+                boards = boardRepository.getList5(location1, location2, age1,age2, user, pageable);
+            }
+
 
         }else if(age.equals("상관없음")){
-            System.out.println("7");
-            boards = boardRepository.getList4(location, num_type, user, pageable);
+            if(location2.equals("상관없음")){
+                boards = boardRepository.getList10(location1, num_type, user, pageable);
+            }else{
+                boards = boardRepository.getList4(location1, location2, num_type, user, pageable);
+            }
+
         }else{
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
-            boards = boardRepository.getList7(location, num_type, age1, age2, user, pageable);
+            if(location2.equals("상관없음")){
+                boards = boardRepository.getList11(location1, num_type, age1, age2, user, pageable);
+            }else{
+                boards = boardRepository.getList7(location1, location2, num_type, age1, age2, user, pageable);
+            }
+
         }
 
 
@@ -108,14 +134,14 @@ public class BoardRestController {
 
             if(m==null){
                 board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
-                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
-                        b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
+                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
+                        b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
                 );
 
             }else{
                 board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
-                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation(), b.getNum_type(), b.getAge(), b.getGender(),
-                        b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
+                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
+                        b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
                 );
             }
             BoardDto tmpBoard = new BoardDto();
@@ -132,24 +158,27 @@ public class BoardRestController {
                                                             @RequestParam(value="img2") MultipartFile img2,
                                                             @RequestParam(value = "img3") MultipartFile img3,
                                                             @RequestParam("title") @RequestBody String ptitle,
-                                                            @RequestParam("location") @RequestBody String plocation,
+                                                            @RequestParam("location1") @RequestBody String plocation1,
+                                                            @RequestParam("location2") @RequestBody String plocation2,
                                                             @RequestParam("num_type") @RequestBody String pnum_type,
                                                             @RequestParam("gender") @RequestBody String pgender,
+                                                            @RequestParam("date") @RequestBody String pdate,
                                                             @RequestParam(value="tag1", required = false) @RequestBody String ptag1,
                                                             @RequestParam(value="tag2", required = false) @RequestBody String ptag2,
                                                             @RequestParam(value="tag3", required = false) @RequestBody String ptag3,
                                                             @RequestParam("average_age") @RequestBody String page,
                                                             @RequestParam(value = "user", required = false) @RequestBody String puser
-    )  throws IOException {
+    ) throws IOException, ParseException {
 
 
-
+        System.out.println(pdate);
 
         String title = ptitle;
         String tag1 = ptag1;
         String tag2 = ptag2;
         String tag3 = ptag3;
-        String location = plocation;
+        String location1 = plocation1;
+        String location2 = plocation2;
         String num_type = pnum_type;
 
         String age = page;  //안보내줘도 될듯
@@ -162,8 +191,9 @@ public class BoardRestController {
             latest_data = 0;
         }
 
-
-
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date utilDate = format.parse(pdate);
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
         Board board = new Board();
         board.setTitle(title);
@@ -173,11 +203,13 @@ public class BoardRestController {
         board.setTag1(tag1);
         board.setTag2(tag2);
         board.setTag3(tag3);
-        board.setLocation(location);
+        board.setLocation1(location1);
+        board.setLocation2(location2);
         board.setNum_type(num_type);
         board.setAge(Integer.parseInt(age));
         board.setGender(gender);
-        board.setUser(userRepository.getOne(1L));
+        board.setDate(sqlDate);
+        board.setUser(userRepository.findByIdx(Long.parseLong(puser)));
         board.setCreatedDateNow();
         board.setUpdatedDateNow();
 
@@ -206,11 +238,32 @@ public class BoardRestController {
 
     }
 
-    @GetMapping("/{idx}")
-    public ResponseEntity<Board> putBoard(@PathVariable("idx")Long idx){
-        Board board = boardRepository.findByIdx(idx);
+    @GetMapping("/{boardId}/{userId}")
+    public ResponseEntity<BoardDto> putBoard(@PathVariable("boardId")Long boardId, @PathVariable("userId") Long userId){
+        Board board = boardRepository.findByIdx(boardId);
+        User user = userRepository.findByIdx(userId);
 
-        return new ResponseEntity<>(board, HttpStatus.OK);
+        List<Object[]> object = boardRepository.noBoard(user, boardId);
+
+        Board b = (Board) object.get(0)[0];
+        Bookmark m = (Bookmark) object.get(0)[1];
+
+        BoardDto boardDto = new BoardDto();
+
+        if(m==null){
+            boardDto.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                    b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
+                    b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
+            );
+        }else{
+            boardDto.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                    b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
+                    b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
+            );
+        }
+
+
+        return new ResponseEntity<>(boardDto, HttpStatus.OK);
     }
     @PutMapping("/{idx}")
     public ResponseEntity<?> putBoard(@PathVariable("idx")Long idx, @RequestBody Board board){
@@ -224,6 +277,22 @@ public class BoardRestController {
     public ResponseEntity<?> deleteBoard(@PathVariable("idx")Long idx){
         boardRepository.deleteById(idx);
         return new ResponseEntity<>("{}", HttpStatus.OK);
+    }
+
+    @GetMapping("/rec/{idx}")
+    public ResponseEntity<List<Board>> recBoard(@PathVariable("idx") Long idx){
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<Board> recs = boardRepository.rec1(pageable);
+
+        if(idx == 1L){
+            recs = boardRepository.rec1(pageable);
+
+
+        }else{
+
+        }
+        List<Board> boards = recs.getContent();
+        return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 
 

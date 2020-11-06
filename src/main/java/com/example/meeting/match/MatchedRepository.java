@@ -14,10 +14,13 @@ public interface MatchedRepository extends JpaRepository<Matched, Long> {
     @Query("SELECT m FROM Matched m WHERE m.sender.idx = ?1")
     List<Matched> findSend(Long senderId);
 
-    @Query("SELECT m FROM Matched m WHERE m.maker.idx = ?1")
+    @Query("SELECT m FROM Matched m WHERE m.board.user.idx = ?1")
     List<Matched> findMaker(Long makerId);
 
-    @Query("SELECT m FROM Matched m WHERE m.sender.idx = ?1 AND m.maker.idx = ?2 AND m.board.idx = ?3")
-    Matched findMatched(Long senderId, Long makerId, Long boardId);
+    @Query("SELECT m FROM Matched m WHERE m.board = ?1")
+    List<Matched> findBoard(Board board);
+
+    @Query("SELECT m FROM Matched m WHERE m.sender.idx = ?1 AND m.board.idx = ?2")
+    List<Matched> findMatched(Long senderId,  Long boardId);
 
 }

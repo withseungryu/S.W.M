@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -48,7 +49,10 @@ public class Board implements Serializable {
 
 
     @Column
-    private String location;
+    private String location1;
+
+    @Column
+    private String location2;
 
     @Column
     private String num_type;
@@ -58,6 +62,9 @@ public class Board implements Serializable {
 
     @Column
     private String gender;
+
+    @Column
+    private Date date;
 
     @Column
     private Timestamp createdDate;
@@ -72,8 +79,8 @@ public class Board implements Serializable {
 
     @Builder
     public Board(String title, String img1, String img2, String img3,
-                 String tag1, String tag2, String tag3, String location, String num_type, int age, String gender,
-                 Timestamp createdDate, Timestamp updatedDate, User user){
+                 String tag1, String tag2, String tag3, String location1, String location2, String num_type, int age, String gender,
+                 Date date, Timestamp createdDate, Timestamp updatedDate, User user){
 
         this.title = title;
         this.img1 = img1;
@@ -82,10 +89,12 @@ public class Board implements Serializable {
         this.tag1 = tag1;
         this.tag2 = tag2;
         this.tag3 = tag3;
-        this.location = location;
+        this.location1 = location1;
+        this.location2 = location2;
         this.num_type = num_type;
         this.age = age;
         this.gender = gender;
+        this.date = date;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.user = user;
@@ -117,10 +126,12 @@ public class Board implements Serializable {
         this.tag1 = board.getTag1();
         this.tag2 = board.getTag2();
         this.tag3 = board.getTag3();
-        this.location = board.getLocation();
+        this.location1 = board.getLocation1();
+        this.location2 = board.getLocation2();
         this.num_type = board.getNum_type();
         this.age = age;
         this.gender = board.getGender();
+        this.date = date;
         this.createdDate = board.getCreatedDate();
         LocalDateTime localDateTime = LocalDateTime.now();
         this.updatedDate = Timestamp.valueOf(localDateTime);
