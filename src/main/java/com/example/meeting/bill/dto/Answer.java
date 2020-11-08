@@ -1,4 +1,4 @@
-package com.example.meeting.bill;
+package com.example.meeting.bill.dto;
 
 import lombok.Data;
 

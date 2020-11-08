@@ -2,9 +2,10 @@ package com.example.meeting.bookmark;
 
 import com.example.meeting.board.Board;
 import com.example.meeting.board.BoardRepository;
+import com.example.meeting.bookmark.dto.Answer;
+import com.example.meeting.bookmark.dto.BookmarkDto;
 import com.example.meeting.user.User;
 import com.example.meeting.user.UserRepository;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

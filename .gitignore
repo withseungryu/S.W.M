@@ -15,6 +15,12 @@ build/
 .sts4-cache
 
 ### IntelliJ IDEA ###
+*.zip
+*.pem
+*.jks
+*.cer
+*.ts
+*.p12
 .idea
 *.iws
 *.iml

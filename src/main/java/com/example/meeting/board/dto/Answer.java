@@ -1,4 +1,4 @@
-package com.example.meeting.board;
+package com.example.meeting.board.dto;
 
 import lombok.Data;
 

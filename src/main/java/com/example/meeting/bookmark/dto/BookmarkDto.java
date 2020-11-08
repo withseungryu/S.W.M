@@ -1,4 +1,4 @@
-package com.example.meeting.bookmark;
+package com.example.meeting.bookmark.dto;
 
 
 import lombok.Data;

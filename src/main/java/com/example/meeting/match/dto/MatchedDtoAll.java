@@ -1,4 +1,4 @@
-package com.example.meeting.match;
+package com.example.meeting.match.dto;
 
 import java.util.List;
 

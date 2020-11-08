@@ -1,4 +1,4 @@
-package com.example.meeting.user;
+package com.example.meeting.bookmark.dto;
 
 import lombok.Data;
 
@@ -6,11 +6,9 @@ import lombok.Data;
 public class Answer {
     int code;
     String msg;
-    Long idx;
 
-    public void setAnswer(int code, String msg, Long idx){
+    public void setAnswer(int code, String msg){
         this.code = code;
         this.msg = msg;
-        this.idx = idx;
     }
 }

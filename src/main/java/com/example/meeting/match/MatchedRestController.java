@@ -2,10 +2,10 @@ package com.example.meeting.match;
 
 import com.example.meeting.board.Board;
 import com.example.meeting.board.BoardRepository;
-import com.example.meeting.bookmark.BookmarkRepository;
+import com.example.meeting.match.dto.AnswerMatch;
+import com.example.meeting.match.dto.MatchedDto;
 import com.example.meeting.user.User;
 import com.example.meeting.user.UserRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
