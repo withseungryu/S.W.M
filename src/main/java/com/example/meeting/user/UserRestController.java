@@ -45,7 +45,7 @@ public class UserRestController {
     public @ResponseBody
     ResponseEntity<CheckAnswer> checkLogin(@RequestBody LoginEmail loginEmail, HttpServletResponse res){
 
-
+        System.out.println("fdfd");
         User user = userRepository.findByEmail(loginEmail.getEmail());
         String token = jwtService.create(user);
 

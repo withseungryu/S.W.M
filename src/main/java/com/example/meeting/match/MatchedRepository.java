@@ -11,6 +11,9 @@ import java.util.List;
 @RepositoryRestResource
 public interface MatchedRepository extends JpaRepository<Matched, Long> {
 
+    @Query("SELECT m FROM Matched m WHERE m.idx = ?1")
+    Matched findIdx(Long idx);
+
     @Query("SELECT m FROM Matched m WHERE m.sender.idx = ?1")
     List<Matched> findSend(Long senderId);
 

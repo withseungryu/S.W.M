@@ -56,6 +56,13 @@ public class MatchedRestController {
         User sender = userRepository.findByIdx(matchedDto.getSenderId());
         User maker = userRepository.findByIdx(board.getUser().getIdx());
 
+        if(sender.equals(maker)){
+            AnswerMatch ans = new AnswerMatch();
+            ans.setAnswer(403, "당신이 만든 게시판입니다.");
+            return new ResponseEntity<>(ans, HttpStatus.OK);
+        }
+
+
         List<Matched> chkList = matchedRepository.findMatched(sender.getIdx(), board.getIdx());
 
         if(chkList.size() >0){
@@ -93,16 +100,24 @@ public class MatchedRestController {
         matched.setCreatedDateNow();
 
         if(matchedDto.getStatus()) {
+
+            if(sender.getPoint() >=50) {
+                sender.setPoint(sender.getPoint() - 50);
+                userRepository.save(sender);
+            }else{
+                ans.setAnswer(402, "포인트가 부족합니다.....");
+                return new ResponseEntity<>(ans, HttpStatus.CREATED);
+            }
             matched.setStatus(matchedDto.getStatus());
         }else{
             matched.setStatus(matchedDto.getStatus());
         }
 
+        ans.setAnswer(200, "Success");
 
         matchedRepository.save(matched);
 
 
-        ans.setAnswer(200, "Success");
 
         return new ResponseEntity<>(ans, HttpStatus.CREATED);
 
@@ -128,7 +143,7 @@ public class MatchedRestController {
             }
             if(chk){
 
-                ans.setAnswer(400, "Fail(이미 성사된 매치가 있습니다)");
+                ans.setAnswer(401, "Fail(이미 성사된 매치가 있습니다)");
                 return new ResponseEntity<>(ans, HttpStatus.CREATED);
 
             }
@@ -141,6 +156,13 @@ public class MatchedRestController {
         if(matched.isStatus()){
             ans.setAnswer(400, "Fail(이미 결제됐는데요?)");
         }else{
+            if(sender.getPoint() >=50) {
+                sender.setPoint(sender.getPoint() - 50);
+                userRepository.save(sender);
+            }else{
+                ans.setAnswer(402, "포인트가 부족합니다.....");
+                return new ResponseEntity<>(ans, HttpStatus.CREATED);
+            }
             matched.setStatus(true);
             matchedRepository.save(matched);
             ans.setAnswer(200, "Success");

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.*;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,8 +40,8 @@ public class BoardRestController {
                                                    @RequestParam(value ="num_type" ,required = false) String num_type,
                                                    @RequestParam(value ="age", required = false) String age,
                                                    @RequestParam(value = "userId", required = false) Long userId,
-                                                   @RequestParam(value="date", required = false) String sdate
-    ) throws IOException{
+                                                   @RequestParam(value="date", required = false) String date
+    ) throws IOException, ParseException {
 
         Page<Object[]> boards;
         User user = userRepository.findByIdx(userId);
@@ -48,57 +49,77 @@ public class BoardRestController {
         System.out.println(num_type + age + location1);
         System.out.println(location2);
 
-        if(location1 == null && location2 == null && num_type == null && age == null){
-            System.out.println("fd");
-            boards = boardRepository.getfindAll(user, pageable);
+        String bdate1;
+        String bdate2;
+        System.out.println(date);
+
+        if(date == null || date.equals("상관없음")){
+            bdate1 = "2000-01-01 00:00:00";
+            bdate2 = "2100-01-01 00:00:00";
+        }else {
+            date = date.replace('/', '-');
+
+            bdate1 = date + " 00:00:00";
+            bdate2 = date + " 23:59:59";
+        }
+
+        java.sql.Timestamp date1 = Timestamp.valueOf(bdate1);
+        java.sql.Timestamp date2 = Timestamp.valueOf(bdate2);
+
+
+        System.out.println(date1);
+        System.out.println(date2);
+        if(location1 == null && location2 == null && num_type == null && age == null && date == null){
+            boards = boardRepository.getfindAll(user, date1, date2, pageable);
         }
 
         else if(location1.equals("상관없음") && location2.equals("상관없음") && num_type.equals("상관없음") && age.equals("상관없음")){
-            boards = boardRepository.getfindAll(user, pageable);
+            System.out.println("gdgd");
+            boards = boardRepository.getfindAll(user, date1, date2, pageable);
         }else if(location1.equals("상관없음") && location2.equals("상관없음") && num_type.equals("상관없음")){
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
-            boards = boardRepository.getList3(age1, age2, user, pageable);
+            boards = boardRepository.getList3(age1, age2, user, date1, date2,pageable);
         }else if(location1.equals("상관없음") && location2.equals("상관없음") && age.equals("상관없음")){
             System.out.println("3");
-            boards = boardRepository.getList2(num_type, user, pageable);
+            boards = boardRepository.getList2(num_type, user,  date1, date2, pageable);
         }
         else if(age.equals("상관없음") && num_type.equals("상관없음")){
             if(location2.equals("상관없음")){
-                boards = boardRepository.getList8(location1, user, pageable);
+                boards = boardRepository.getList8(location1, user,   date1, date2,pageable);
             }else{
-                boards = boardRepository.getList1(location1, location2, user, pageable);
+                boards = boardRepository.getList1(location1, location2, user, date1, date2,  pageable);
             }
 
         }else if(location1.equals("상관없음") && location2.equals("상관없음")){
             System.out.println("5");
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
-            boards = boardRepository.getList6(num_type, age1, age2, user, pageable);
+            boards = boardRepository.getList6(num_type, age1, age2, user,  date1, date2, pageable);
         }else if(num_type.equals("상관없음")){
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
             if(location2.equals("상관없음")) {
-                boards = boardRepository.getList9(location1, age1, age2, user, pageable);
+                boards = boardRepository.getList9(location1, age1, age2, user, date1, date2, pageable);
             }else{
-                boards = boardRepository.getList5(location1, location2, age1,age2, user, pageable);
+                boards = boardRepository.getList5(location1, location2, age1,age2, user, date1, date2, pageable);
             }
 
 
         }else if(age.equals("상관없음")){
             if(location2.equals("상관없음")){
-                boards = boardRepository.getList10(location1, num_type, user, pageable);
+                boards = boardRepository.getList10(location1, num_type, user, date1, date2, pageable);
             }else{
-                boards = boardRepository.getList4(location1, location2, num_type, user, pageable);
+                boards = boardRepository.getList4(location1, location2, num_type, user,  date1, date2,pageable);
             }
 
         }else{
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
             if(location2.equals("상관없음")){
-                boards = boardRepository.getList11(location1, num_type, age1, age2, user, pageable);
+                boards = boardRepository.getList11(location1, num_type, age1, age2, user, date1, date2, pageable);
             }else{
-                boards = boardRepository.getList7(location1, location2, num_type, age1, age2, user, pageable);
+                boards = boardRepository.getList7(location1, location2, num_type, age1, age2, user,  date1, date2,pageable);
             }
 
         }
