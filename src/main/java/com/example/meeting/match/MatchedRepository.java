@@ -17,8 +17,11 @@ public interface MatchedRepository extends JpaRepository<Matched, Long> {
     @Query("SELECT m FROM Matched m WHERE m.sender.idx = ?1")
     List<Matched> findSend(Long senderId);
 
-    @Query("SELECT m FROM Matched m WHERE m.board.user.idx = ?1")
+    @Query("SELECT m FROM Matched m WHERE m.board.user.idx = ?1 ORDER BY m.board.idx")
     List<Matched> findMaker(Long makerId);
+
+    @Query("SELECT m FROM Matched m WHERE (m.board.user.idx = ?1 OR m.sender.idx = ?1)  AND m.is_matched = true ORDER BY m.board.idx")
+    List<Matched> findMatch(Long makerId);
 
     @Query("SELECT m FROM Matched m WHERE m.board = ?1")
     List<Matched> findBoard(Board board);

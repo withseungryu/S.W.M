@@ -43,9 +43,15 @@ public class User implements Serializable {
     @Column
     private int point;
 
+    @Column
+    private String token;
+
+    @Column
+    private String jwt;
+
 
     @Builder
-    public User(String nickName, String img, String email, String gender, String age,  String location, String kakao_id, int point){
+    public User(String nickName, String img, String email, String gender, String age,  String location, String kakao_id, int point, String token, String jwt){
         this.nickName = nickName;
 //        this.password = password;
         this.img = img;
@@ -55,6 +61,8 @@ public class User implements Serializable {
         this.location = location;
         this.kakao_id = kakao_id;
         this.point = point;
+        this.token = token;
+        this.jwt =jwt;
     }
 
     public void saveUser(String email){
@@ -63,6 +71,7 @@ public class User implements Serializable {
         this.gender = "";
         this.age = "";
         this.email = email;
+        this.jwt=jwt;
 
     }
 

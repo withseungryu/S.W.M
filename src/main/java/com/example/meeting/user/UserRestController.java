@@ -45,7 +45,7 @@ public class UserRestController {
     public @ResponseBody
     ResponseEntity<CheckAnswer> checkLogin(@RequestBody LoginEmail loginEmail, HttpServletResponse res){
 
-        System.out.println("fdfd");
+
         User user = userRepository.findByEmail(loginEmail.getEmail());
         String token = jwtService.create(user);
 
@@ -69,7 +69,7 @@ public class UserRestController {
 
     @PostMapping("api/users")
     public @ResponseBody
-    ResponseEntity uploadFile(@RequestParam(value = "img") MultipartFile img, @RequestParam("email") String email, @RequestParam("nickName") @RequestBody  String nickName, @RequestParam("age") @RequestBody String age,  @RequestParam("location") @RequestBody String location,  @RequestParam("kakao_id") @RequestBody String kakao_id ) throws IllegalStateException, IOException {
+    ResponseEntity uploadFile(@RequestParam(value = "img") MultipartFile img, @RequestParam("email") String email, @RequestParam("nickName") @RequestBody  String nickName, @RequestParam(value="age", required=false) @RequestBody String age, @RequestParam(value="gender", required=false) @RequestBody String gender,  @RequestParam("location") @RequestBody String location,  @RequestParam("kakao_id") @RequestBody String kakao_id, @RequestParam(value= "token", required = false) @RequestBody String token ) throws IllegalStateException, IOException {
 
         User user = new User();
 
@@ -82,7 +82,18 @@ public class UserRestController {
         user.setAge(age);
         user.setLocation(location);
         user.setKakao_id(kakao_id);
-
+        if(gender != null) {
+            user.setGender(gender);
+        }else{
+            user.setGender("homo");
+        }
+        if(token!=null) {
+            user.setToken(token);
+        }
+        else{
+            user.setToken("ㅎㅇㅎㅇ");
+        }
+        user.setJwt("tmp");
         userRepository.save(user);
 
         String uPath = s3Uploader.upload(img, "user_img_" + email + ".jpg" );
