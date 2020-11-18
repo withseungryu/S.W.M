@@ -1,5 +1,6 @@
 package com.example.meeting.fcmserver.service;
 
+import com.example.meeting.fcmserver.TokenDto;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,10 +11,13 @@ import java.util.List;
 
 public class AndroidPushPeriodicNotifications {
 
-    public static String PeriodicNotificationJson() throws JSONException {
+    public static String PeriodicNotificationJson(TokenDto tokenDto) throws JSONException {
         LocalDate localDate = LocalDate.now();
 
-        String sampleData[] = {"device token value 1","device token value 2","device token value 3"};
+        String token1 = tokenDto.getToken1();
+        String token2 = tokenDto.getToken2();
+
+        String sampleData[] = {token1,token2};
 
         JSONObject body = new JSONObject();
 
@@ -32,12 +36,11 @@ public class AndroidPushPeriodicNotifications {
         body.put("registration_ids", array);
 
         JSONObject notification = new JSONObject();
-        notification.put("title","hello!");
-        notification.put("body","Today is "+localDate.getDayOfWeek().name()+"!");
+        notification.put("title","미팅의 결과가 나왔습니다.");
+        notification.put("body","성사됐습니다!!!!!!! 지금까지 고생하셨습니다.");
 
         body.put("notification", notification);
 
-        System.out.println(body.toString());
 
         return body.toString();
     }

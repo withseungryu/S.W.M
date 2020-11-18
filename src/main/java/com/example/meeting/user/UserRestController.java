@@ -47,11 +47,24 @@ public class UserRestController {
 
 
         User user = userRepository.findByEmail(loginEmail.getEmail());
-        String token = jwtService.create(user);
+
+
+        String token = loginEmail.getToken();
+        if(user != null && token !=null) {
+            if (token != user.getToken()) {
+                user.setToken(token);
+                userRepository.save(user);
+            }
+        }
+
+
+        String jwt = jwtService.create(user);
 
         //비밀번호도 저장한 후 만들어주자
         CheckAnswer ans = new CheckAnswer();
-        res.setHeader("jwt-auth-token", token);
+        res.setHeader("jwt-auth-token", jwt);
+
+
         if(user == null){
             ans.setCheckAnswer(200, "Success", false, 0L);
             return new ResponseEntity<>(ans, HttpStatus.OK);
@@ -82,6 +95,8 @@ public class UserRestController {
         user.setAge(age);
         user.setLocation(location);
         user.setKakao_id(kakao_id);
+//        user.setToken(token);
+
         if(gender != null) {
             user.setGender(gender);
         }else{
@@ -91,7 +106,7 @@ public class UserRestController {
             user.setToken(token);
         }
         else{
-            user.setToken("ㅎㅇㅎㅇ");
+            user.setToken("??");
         }
         user.setJwt("tmp");
         userRepository.save(user);

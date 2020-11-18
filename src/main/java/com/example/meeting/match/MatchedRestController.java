@@ -7,10 +7,23 @@ import com.example.meeting.bookmark.Bookmark;
 import com.example.meeting.match.dto.*;
 import com.example.meeting.user.User;
 import com.example.meeting.user.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 
+import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import java.io.*;
+import java.net.http.HttpClient;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +102,7 @@ public class MatchedRestController {
             if(m == null){
                 MakerBoardDto mt = new MakerBoardDto();
                 List<SenderDto> new_senderDtos = new ArrayList<>();
-                mt.setAll(idx,b.getTitle(),b.getImg1(), b.getImg2(), b.getImg3(), b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(), b.getDate(), b.getDate2(), b.getCreatedDate(),b.getUpdatedDate(),  new_senderDtos );
+                mt.setAll(idx,b.getTitle(),b.getImg1(), b.getImg2(), b.getImg3(), b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),  b.getCreatedDate(),b.getUpdatedDate(),  new_senderDtos );
                 makerDtos.add(mt);
                 new_senderDtos.clear();
                 senderDtos.clear();
@@ -113,7 +126,7 @@ public class MatchedRestController {
                         new_senderDtos2.addAll(senderDtos);
 
                     }
-                    mt2.setAll(b2.getIdx(), b2.getTitle(),  b2.getImg1(),  b2.getImg2(),  b2.getImg3(), b2.getTag1(), b2.getTag2(), b2.getTag3(), b2.getLocation1(), b2.getLocation2(), b2.getNum_type(), b2.getAge(), b2.getGender(), b2.getDate(),  b2.getDate2(), b2.getCreatedDate(), b2.getUpdatedDate(), new_senderDtos );
+                    mt2.setAll(b2.getIdx(), b2.getTitle(),  b2.getImg1(),  b2.getImg2(),  b2.getImg3(), b2.getTag1(), b2.getTag2(), b2.getTag3(), b2.getLocation1(), b2.getLocation2(), b2.getNum_type(), b2.getAge(), b2.getGender(), b2.getCreatedDate(), b2.getUpdatedDate(), new_senderDtos );
                     new_senderDtos.clear();
                     makerDtos.add(mt2);
                     senderDtos.clear();
@@ -140,7 +153,7 @@ public class MatchedRestController {
                 MakerBoardDto mt = new MakerBoardDto();
                 List<SenderDto> new_senderDtos = new ArrayList<>();
                 new_senderDtos.addAll(senderDtos);
-                mt.setAll(idx,m.getBoard().getTitle(), m.getBoard().getImg1(), m.getBoard().getImg2(),  m.getBoard().getImg3(), m.getBoard().getTag1(), m.getBoard().getTag2(), m.getBoard().getTag3(), m.getBoard().getLocation1(), m.getBoard().getLocation2(), m.getBoard().getNum_type(), m.getBoard().getAge(), m.getBoard().getGender(), m.getBoard().getDate(),  m.getBoard().getDate2(), m.getBoard().getCreatedDate(), m.getBoard().getUpdatedDate(),  new_senderDtos );
+                mt.setAll(idx,m.getBoard().getTitle(), m.getBoard().getImg1(), m.getBoard().getImg2(),  m.getBoard().getImg3(), m.getBoard().getTag1(), m.getBoard().getTag2(), m.getBoard().getTag3(), m.getBoard().getLocation1(), m.getBoard().getLocation2(), m.getBoard().getNum_type(), m.getBoard().getAge(), m.getBoard().getGender(), m.getBoard().getCreatedDate(), m.getBoard().getUpdatedDate(),  new_senderDtos );
                 makerDtos.add(mt);
                 new_senderDtos.clear();
                 senderDtos.clear();
@@ -162,7 +175,7 @@ public class MatchedRestController {
                         new_senderDtos2.addAll(senderDtos);
                     }
                     MakerBoardDto mt2 = new MakerBoardDto();
-                    mt2.setAll(b2.getIdx(), b2.getTitle(),  b2.getImg1(),  b2.getImg2(),  b2.getImg3(), b2.getTag1(), b2.getTag2(), b2.getTag3(), b2.getLocation1(), b2.getLocation2(), b2.getNum_type(), b2.getAge(), b2.getGender(),b2.getDate(), b2.getDate2(),  b2.getCreatedDate(), b2.getUpdatedDate(), new_senderDtos2 );
+                    mt2.setAll(b2.getIdx(), b2.getTitle(),  b2.getImg1(),  b2.getImg2(),  b2.getImg3(), b2.getTag1(), b2.getTag2(), b2.getTag3(), b2.getLocation1(), b2.getLocation2(), b2.getNum_type(), b2.getAge(), b2.getGender(),  b2.getCreatedDate(), b2.getUpdatedDate(), new_senderDtos2 );
 
                     makerDtos.add(mt2);
                     new_senderDtos2.clear();
@@ -184,7 +197,7 @@ public class MatchedRestController {
                     MakerBoardDto mt = new MakerBoardDto();
                     List<SenderDto> new_senderDtos = new ArrayList<>();
                     new_senderDtos.addAll(senderDtos);
-                    mt.setAll(idx, m.getBoard().getTitle(),  m.getBoard().getImg1(),  m.getBoard().getImg2(),  m.getBoard().getImg3(), m.getBoard().getTag1(), m.getBoard().getTag2(), m.getBoard().getTag3(), m.getBoard().getLocation1(), m.getBoard().getLocation2(), m.getBoard().getNum_type(), m.getBoard().getAge(), m.getBoard().getGender(), m.getBoard().getDate(), m.getBoard().getDate2(), m.getBoard().getCreatedDate(), m.getBoard().getUpdatedDate(), new_senderDtos );
+                    mt.setAll(idx, m.getBoard().getTitle(),  m.getBoard().getImg1(),  m.getBoard().getImg2(),  m.getBoard().getImg3(), m.getBoard().getTag1(), m.getBoard().getTag2(), m.getBoard().getTag3(), m.getBoard().getLocation1(), m.getBoard().getLocation2(), m.getBoard().getNum_type(), m.getBoard().getAge(), m.getBoard().getGender(),  m.getBoard().getCreatedDate(), m.getBoard().getUpdatedDate(), new_senderDtos );
                     new_senderDtos.clear();
                     makerDtos.add(mt);
                     senderDtos.clear();
@@ -280,12 +293,16 @@ public class MatchedRestController {
 
     }
 
+
     @PatchMapping("/payment")
-    public ResponseEntity<AnswerMatch> payMatch(@RequestBody MatchedDto matchedDto){
+    public ResponseEntity<AnswerMatch> payMatch(@RequestBody MatchedDto matchedDto) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
         Board board = boardRepository.findByIdx(matchedDto.getBoardId());
         User sender = userRepository.findByIdx(matchedDto.getSenderId());
         User maker = userRepository.findByIdx(board.getUser().getIdx());
         AnswerMatch ans = new AnswerMatch();
+
+
+
 
         List<Matched> matcheds = matchedRepository.findBoard(board);
         boolean chk = false;
@@ -323,7 +340,8 @@ public class MatchedRestController {
             matched.setStatus(true);
             matched.set_matched(true);
             matchedRepository.save(matched);
-            ans.setAnswer(200, "Success");
+            fcmExecute(board.getUser().getToken(), sender.getToken());
+            ans.setAnswer(200, "Success(성사 완료)");
         }
 
 
@@ -335,10 +353,13 @@ public class MatchedRestController {
     }
 
 
+
+
     @PatchMapping
-    public ResponseEntity<AnswerMatch> updateMatch(@RequestBody MatchedDto matchedDto){
+    public ResponseEntity<AnswerMatch> updateMatch(@RequestBody MatchedDto matchedDto) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
         Board board = boardRepository.findByIdx(matchedDto.getBoardId());
         User sender = userRepository.findByIdx(matchedDto.getSenderId());
+
 
         AnswerMatch ans = new AnswerMatch();
         List<Matched> matcheds = matchedRepository.findBoard(board);
@@ -375,12 +396,56 @@ public class MatchedRestController {
             }
             matchedRepository.save(matched);
             if (!chk) {
+
                 ans.setAnswer(200, "Success(성사 완료)");
+                fcmExecute(board.getUser().getToken(), sender.getToken());
             }
             return new ResponseEntity<>(ans, HttpStatus.CREATED);
         }else{
             ans.setAnswer(401, "Fail(상대가 본인에게 결제를 신청했습니다.)");
             return new ResponseEntity<>(ans, HttpStatus.CREATED);
         }
+    }
+
+    public void fcmExecute(String token1, String token2) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException, IOException, CertificateException {
+
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(new FileInputStream(new File("swm.jks")),
+                "swm12345".toCharArray());
+        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
+                new SSLContextBuilder()
+                        .loadTrustMaterial(null, new TrustSelfSignedStrategy())
+                        .loadKeyMaterial(keyStore, "swm12345".toCharArray()).build());
+        CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
+        ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(
+                httpClient);
+
+        RestTemplate rt = new RestTemplate(requestFactory); //http 요청을 간단하게 해줄 수 있는 클래스
+
+        //HttpHeader 오브젝트 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        //HttpBody 오브젝트 생성
+        MultiValueMap<String, String> tokenDtos = new LinkedMultiValueMap<>();
+        tokenDtos.add("token1", token1);
+        tokenDtos.add("token2", token2);
+
+
+
+        //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        HttpEntity<MultiValueMap<String, String>> httpEntity =
+                new HttpEntity<>(tokenDtos, headers);
+
+
+        //실제로 요청하기
+        //Http 요청하기 - POST 방식으로 - 그리고 response 변수의 응답을 받음.
+        ResponseEntity<String> response = rt.exchange(
+                "https://shallwemeet.co.kr/api/send",
+                HttpMethod.POST,
+                httpEntity,
+                String.class
+        );
+
     }
 }

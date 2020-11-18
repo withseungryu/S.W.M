@@ -3,6 +3,7 @@ package com.example.meeting.fcmserver.controller;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import com.example.meeting.fcmserver.TokenDto;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,12 @@ public class NotificationController {
     @Autowired
     AndroidPushNotificationService androidPushNotificationsService;
 
-    @GetMapping(value = "/send")
-    public @ResponseBody ResponseEntity<String> send() throws JSONException, InterruptedException  {
-        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson();
+    @PostMapping(value = "/api/send")
+    public @ResponseBody ResponseEntity<String> send(@RequestBody TokenDto tokenDto) throws JSONException, InterruptedException  {
+        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenDto);
 
-        System.out.println(notifications);
+
+        System.out.println(tokenDto.getToken1() + " ,,,, " +  tokenDto.getToken2());
         HttpEntity<String> request = new HttpEntity<>(notifications);
 
         CompletableFuture<String> pushNotification = androidPushNotificationsService.send(request);

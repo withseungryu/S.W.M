@@ -63,11 +63,6 @@ public class Board implements Serializable {
     @Column
     private String gender;
 
-    @Column
-    private Date date;
-
-    @Column
-    private String date2;
 
     @Column
     private Timestamp createdDate;
@@ -83,7 +78,7 @@ public class Board implements Serializable {
     @Builder
     public Board(String title, String img1, String img2, String img3,
                  String tag1, String tag2, String tag3, String location1, String location2, String num_type, int age, String gender,
-                 Date date, String date2, Timestamp createdDate, Timestamp updatedDate, User user){
+                  Timestamp createdDate, Timestamp updatedDate, User user){
 
         this.title = title;
         this.img1 = img1;
@@ -97,8 +92,6 @@ public class Board implements Serializable {
         this.num_type = num_type;
         this.age = age;
         this.gender = gender;
-        this.date = date;
-        this.date2 = date2;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.user = user;
@@ -135,7 +128,6 @@ public class Board implements Serializable {
         this.num_type = board.getNum_type();
         this.age = age;
         this.gender = board.getGender();
-        this.date = date;
         this.createdDate = board.getCreatedDate();
         LocalDateTime localDateTime = LocalDateTime.now();
         this.updatedDate = Timestamp.valueOf(localDateTime);
