@@ -4,6 +4,7 @@ import com.example.meeting.board.Board;
 import com.example.meeting.board.BoardRepository;
 import com.example.meeting.board.dto.BoardDto;
 import com.example.meeting.bookmark.Bookmark;
+import com.example.meeting.fcmserver.TokenDto;
 import com.example.meeting.match.dto.*;
 import com.example.meeting.user.User;
 import com.example.meeting.user.UserRepository;
@@ -89,7 +90,6 @@ public class MatchedRestController {
         List<SenderDto> senderDtos = new ArrayList<>();
 
 
-        System.out.println(boards.size());
         for(int i=0; i<boards.size()-1; ++i) {
 
             BoardDto board = new BoardDto();
@@ -117,7 +117,7 @@ public class MatchedRestController {
 
                         senderDto2.setAll(m2.getSender().getIdx(), m2.getSender().getNickName(),
                                 m2.getSender().getImg(), m2.getSender().getEmail(),
-                                m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation(),
+                                m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(), m2.getSender().getLocation2(),
                                 m2.getSender().getKakao_id(), m2.getSender().getPoint(), m2.getSender().getToken(), m2.getSender().getJwt(), m2.isStatus(),
                                 m2.is_matched(), m2.getCreatedTime());
                         senderDtos.add(senderDto2);
@@ -142,7 +142,7 @@ public class MatchedRestController {
             SenderDto senderDto = new SenderDto();
             senderDto.setAll(m.getSender().getIdx(), m.getSender().getNickName(),
                     m.getSender().getImg(), m.getSender().getEmail(),
-                    m.getSender().getGender(), m.getSender().getAge(), m.getSender().getLocation(),
+                    m.getSender().getGender(), m.getSender().getAge(), m.getSender().getLocation1(),m.getSender().getLocation2(),
                     m.getSender().getKakao_id(), m.getSender().getPoint(),  m.getSender().getToken(), m.getSender().getJwt(),m.isStatus(),
                     m.is_matched(), m.getCreatedTime());
 
@@ -165,7 +165,7 @@ public class MatchedRestController {
                         SenderDto senderDto2 = new SenderDto();
                         senderDto2.setAll(m2.getSender().getIdx(), m2.getSender().getNickName(),
                                 m2.getSender().getImg(), m2.getSender().getEmail(),
-                                m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation(),
+                                m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(),  m2.getSender().getLocation2(),
                                 m2.getSender().getKakao_id(), m2.getSender().getPoint(),  m2.getSender().getToken(), m2.getSender().getJwt(),m2.isStatus(),
                                 m2.is_matched(), m2.getCreatedTime());
                         senderDtos.add(senderDto2);
@@ -188,7 +188,7 @@ public class MatchedRestController {
                     SenderDto senderDto2 = new SenderDto();
                     senderDto2.setAll(m2.getSender().getIdx(), m2.getSender().getNickName(),
                             m2.getSender().getImg(), m2.getSender().getEmail(),
-                            m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation(),
+                            m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(), m2.getSender().getLocation2(),
                             m2.getSender().getKakao_id(), m2.getSender().getPoint(),  m2.getSender().getToken(), m2.getSender().getJwt(), m2.isStatus(),
                             m2.is_matched(), m2.getCreatedTime());
                     senderDtos.add(senderDto2);
@@ -340,7 +340,7 @@ public class MatchedRestController {
             matched.setStatus(true);
             matched.set_matched(true);
             matchedRepository.save(matched);
-            fcmExecute(board.getUser().getToken(), sender.getToken());
+            fcmExecute(matched.getBoard().getUser().getToken(), matched.getSender().getToken() );
             ans.setAnswer(200, "Success(성사 완료)");
         }
 
@@ -396,9 +396,9 @@ public class MatchedRestController {
             }
             matchedRepository.save(matched);
             if (!chk) {
-
+                fcmExecute(matched.getBoard().getUser().getToken(), matched.getSender().getToken() );
                 ans.setAnswer(200, "Success(성사 완료)");
-                fcmExecute(board.getUser().getToken(), sender.getToken());
+
             }
             return new ResponseEntity<>(ans, HttpStatus.CREATED);
         }else{
@@ -424,18 +424,19 @@ public class MatchedRestController {
 
         //HttpHeader 오브젝트 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Content-type", "application/json");
 
         //HttpBody 오브젝트 생성
-        MultiValueMap<String, String> tokenDtos = new LinkedMultiValueMap<>();
-        tokenDtos.add("token1", token1);
-        tokenDtos.add("token2", token2);
 
+
+        TokenDto tokenDto = new TokenDto();
+        tokenDto.setToken1(token1);
+        tokenDto.setToken2(token2);
 
 
         //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
-        HttpEntity<MultiValueMap<String, String>> httpEntity =
-                new HttpEntity<>(tokenDtos, headers);
+        HttpEntity<TokenDto> httpEntity =
+                new HttpEntity<>(tokenDto, headers);
 
 
         //실제로 요청하기

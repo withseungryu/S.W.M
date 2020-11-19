@@ -8,6 +8,7 @@ import com.example.meeting.jwt.JwtService;
 import com.example.meeting.user.dto.Answer;
 import com.example.meeting.user.dto.CheckAnswer;
 import com.example.meeting.user.dto.LoginEmail;
+import com.example.meeting.user.dto.NormalAnswer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -82,7 +83,7 @@ public class UserRestController {
 
     @PostMapping("api/users")
     public @ResponseBody
-    ResponseEntity uploadFile(@RequestParam(value = "img") MultipartFile img, @RequestParam("email") String email, @RequestParam("nickName") @RequestBody  String nickName, @RequestParam(value="age", required=false) @RequestBody String age, @RequestParam(value="gender", required=false) @RequestBody String gender,  @RequestParam("location") @RequestBody String location,  @RequestParam("kakao_id") @RequestBody String kakao_id, @RequestParam(value= "token", required = false) @RequestBody String token ) throws IllegalStateException, IOException {
+    ResponseEntity uploadFile(@RequestParam(value = "img") MultipartFile img, @RequestParam("email") String email, @RequestParam("nickName") @RequestBody  String nickName, @RequestParam(value="age", required=false) @RequestBody String age, @RequestParam(value="gender", required=false) @RequestBody String gender,  @RequestParam("location1") @RequestBody String location1, @RequestParam("location2") @RequestBody String location2,  @RequestParam("kakao_id") @RequestBody String kakao_id, @RequestParam(value= "token", required = false) @RequestBody String token ) throws IllegalStateException, IOException {
 
         User user = new User();
 
@@ -93,7 +94,8 @@ public class UserRestController {
         user.setImg("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "user_img_" + email+ ".jpg");
         user.setNickName(nickName);
         user.setAge(age);
-        user.setLocation(location);
+        user.setLocation1(location1);
+        user.setLocation2(location2);
         user.setKakao_id(kakao_id);
 //        user.setToken(token);
 
@@ -120,6 +122,54 @@ public class UserRestController {
         as2.setAnswer(200, "Success", idx);
 
         return new ResponseEntity<>(as2,HttpStatus.CREATED);
+
+    }
+
+    @PatchMapping("api/users/{idx}")
+    public @ResponseBody
+    ResponseEntity updateUser(@RequestParam(value = "img", required = false) MultipartFile img,
+                              @RequestParam(value = "email", required = false) String email,
+                              @RequestParam(value = "nickName", required = false) @RequestBody  String nickName,
+                              @RequestParam(value="age", required=false) @RequestBody String age,
+                              @RequestParam(value="gender", required=false) @RequestBody String gender,
+                              @RequestParam(value="location1", required = false) @RequestBody String location1,
+                              @RequestParam(value="location2", required = false) @RequestBody String location2,
+                              @RequestParam(value="kakao_id", required = false) @RequestBody String kakao_id,
+                              @RequestParam(value= "token", required = false) @RequestBody String token,
+                              @PathVariable(value="idx") String userId ) throws IllegalStateException, IOException {
+
+        User user = userRepository.findByIdx(Long.parseLong(userId));
+        if(img!= null){
+
+            String uPath = s3Uploader.upload(img, "user_img_" + email + ".jpg" );
+        }
+        if(email != null){
+            user.setEmail(email);
+        }
+        if(nickName != null){
+            user.setNickName(nickName);
+        }
+        if(age != null){
+            user.setAge(age);
+        }
+        if(gender != null){
+            user.setGender(gender);
+        }
+        if(location1 != null){
+            user.setLocation1(location1);
+        }
+        if(location2 != null){
+            user.setLocation2(location2);
+        }
+        if(kakao_id != null){
+            user.setKakao_id(kakao_id);
+        }
+        userRepository.save(user);
+
+        NormalAnswer na = new NormalAnswer();
+        na.setCode(200);
+        na.setMsg("Success");
+        return new ResponseEntity<>(na,HttpStatus.CREATED);
 
     }
 

@@ -67,8 +67,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         @Query("SELECT b FROM Board b  ORDER BY b.createdDate DESC " )
         public Page<Board> rec1(Pageable pageable);
 
-        @Query("SELECT b.idx FROM Board b WHERE b.updatedDate = ( select Max(a.createdDate) from Board a )")
-        public Integer test();
+        @Query("SELECT b FROM Board b  WHERE b.location1 = ?1 AND b.location2 = ?2 ORDER BY b.createdDate DESC " )
+        public Page<Board> rec2(String location1, String location2, Pageable pageable);
+
+        @Query("SELECT b FROM Board b WHERE b.img1 = ?1")
+        public Board searchImg(String img1);
 
 
 

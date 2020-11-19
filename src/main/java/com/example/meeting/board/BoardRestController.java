@@ -4,6 +4,8 @@ import com.example.meeting.board.dto.Answer;
 import com.example.meeting.board.dto.BoardDto;
 import com.example.meeting.bookmark.Bookmark;
 import com.example.meeting.fileupload.S3Uploader;
+import com.example.meeting.match.Matched;
+import com.example.meeting.match.MatchedRepository;
 import com.example.meeting.user.User;
 import com.example.meeting.user.UserRepository;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 @RestController
@@ -31,6 +34,7 @@ public class BoardRestController {
 
     private BoardRepository boardRepository;
     private UserRepository userRepository;
+    private MatchedRepository matchedRepository;
     private S3Uploader s3Uploader;
 
     @GetMapping
@@ -139,22 +143,26 @@ public class BoardRestController {
             Board b = (Board) o[0];
             Bookmark m = (Bookmark) o[1];
 
-            if(m==null){
-                board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
-                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(),  b.getGender(),
-                       b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
-                );
+            Matched matched = matchedRepository.findForBoard(b.getIdx());
+            if(matched == null) {
 
-            }else{
-                board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
-                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
-                      b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
-                );
+                if (m == null) {
+                    board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                            b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
+                            b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
+                    );
+
+                } else {
+                    board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                            b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
+                            b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
+                    );
+                }
+
+                BoardDto tmpBoard = new BoardDto();
+                tmpBoard.cloneBoard(board);
+                boards.add(tmpBoard);
             }
-            BoardDto tmpBoard = new BoardDto();
-            tmpBoard.cloneBoard(board);
-            boards.add(tmpBoard);
-
         }
         return boards;
     }
@@ -194,18 +202,24 @@ public class BoardRestController {
             pgender = "female";
         }
 
-        ///게시판 추가 부분
-        Integer latest_data = boardRepository.test();
-
-        if(latest_data == null){
-            latest_data = 0;
-        }
+//        ///게시판 추가 부분
+//        Integer latest_data = boardRepository.test();
+//
+//        if(latest_data == null){
+//            latest_data = 0;
+//        }
 
         Board board = new Board();
         board.setTitle(title);
-        board.setImg1("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_1.jpg");
-        board.setImg2("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_2.jpg");
-        board.setImg3("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "board_img_" + Integer.toString(latest_data+1) + "_3.jpg");
+        String imgName = randomAlphaWord(25);
+        Board board_img = boardRepository.searchImg(imgName);
+        if(board_img != null){
+            imgName = randomAlphaWord(25);
+        }
+
+        board.setImg1("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + imgName + "_1.jpg");
+        board.setImg2("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + imgName + "_2.jpg");
+        board.setImg3("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + imgName + "_3.jpg");
         board.setTag1(tag1);
         board.setTag2(tag2);
         board.setTag3(tag3);
@@ -225,12 +239,9 @@ public class BoardRestController {
 
 
         /// 이미지 추가 부분
-
-        int latest_id = boardRepository.test();
-        System.out.println(latest_id);
-        String rPath1 = s3Uploader.upload(img1, "board_img_" + Integer.toString(latest_id) + "_1.jpg" );
-        String rPath2 = s3Uploader.upload(img2, "board_img_" + Integer.toString(latest_id) + "_2.jpg");
-        String rPath3 = s3Uploader.upload(img3, "board_img_" + Integer.toString(latest_id) + "_3.jpg");
+        String rPath1 = s3Uploader.upload(img1, imgName + "_1.jpg" );
+        String rPath2 = s3Uploader.upload(img2, imgName + "_2.jpg");
+        String rPath3 = s3Uploader.upload(img3, imgName + "_3.jpg");
         System.out.println(rPath1);
         System.out.println(rPath2);
         System.out.println(rPath3);
@@ -286,21 +297,47 @@ public class BoardRestController {
         return new ResponseEntity<>(ans, HttpStatus.OK);
     }
 
-    @GetMapping("/rec/{idx}")
-    public ResponseEntity<List<Board>> recBoard(@PathVariable("idx") Long idx){
+    @GetMapping("/rec/time")
+    public ResponseEntity<List<Board>> recBoard(){
         Pageable pageable = PageRequest.of(0, 5);
         Page<Board> recs = boardRepository.rec1(pageable);
 
-        if(idx == 1L){
-            recs = boardRepository.rec1(pageable);
 
-
-        }else{
-
-        }
         List<Board> boards = recs.getContent();
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
+
+    @GetMapping("/rec/location")
+    public ResponseEntity<List<Board>> recBoard(@PathVariable("idx") Long idx,
+                                                @RequestParam(value = "location1", required = false) String location1,
+                                                @RequestParam(value = "location2", required = false) String location2){
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<Board> recs = boardRepository.rec2(location1, location2, pageable);
+
+        List<Board> boards = recs.getContent();
+        return new ResponseEntity<>(boards, HttpStatus.OK);
+    }
+
+
+    public static String randomAlphaWord(int wordLength) {
+
+        Random r = new Random();
+
+        StringBuilder sb = new StringBuilder(wordLength);
+
+
+
+        for(int i = 0; i < wordLength; i++) {
+
+            char tmp = (char) ('a' + r.nextInt('z' - 'a'));
+
+            sb.append(tmp);
+
+        }
+        return sb.toString();
+
+    }
+
 
 
 }

@@ -35,7 +35,10 @@ public class User implements Serializable {
     private String age;
 
     @Column
-    private String location;
+    private String location1;
+
+    @Column
+    private String location2;
 
     @Column
     private String kakao_id;
@@ -51,14 +54,15 @@ public class User implements Serializable {
 
 
     @Builder
-    public User(String nickName, String img, String email, String gender, String age,  String location, String kakao_id, int point, String token, String jwt){
+    public User(String nickName, String img, String email, String gender, String age,  String location1, String location2, String kakao_id, int point, String token, String jwt){
         this.nickName = nickName;
 //        this.password = password;
         this.img = img;
         this.email = email;
         this.gender = gender;
         this.age = age;
-        this.location = location;
+        this.location1 = location1;
+        this.location2 = location2;
         this.kakao_id = kakao_id;
         this.point = point;
         this.token = token;

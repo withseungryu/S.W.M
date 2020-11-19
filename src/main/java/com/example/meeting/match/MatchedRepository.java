@@ -14,7 +14,7 @@ public interface MatchedRepository extends JpaRepository<Matched, Long> {
     @Query("SELECT m FROM Matched m WHERE m.idx = ?1")
     Matched findIdx(Long idx);
 
-    @Query("SELECT m FROM Matched m WHERE m.sender.idx = ?1")
+    @Query("SELECT m FROM Matched m WHERE m.sender.idx = ?1 AND m.is_matched = false")
     List<Matched> findSend(Long senderId);
 
     @Query("SELECT m FROM Matched m WHERE m.board.user.idx = ?1 ORDER BY m.board.idx")
@@ -28,5 +28,8 @@ public interface MatchedRepository extends JpaRepository<Matched, Long> {
 
     @Query("SELECT m FROM Matched m WHERE m.sender.idx = ?1 AND m.board.idx = ?2")
     List<Matched> findMatched(Long senderId,  Long boardId);
+
+    @Query("SELECT m FROM Matched m WHERE m.board.idx = ?1 AND m.is_matched = true")
+    Matched findForBoard(Long boardId);
 
 }

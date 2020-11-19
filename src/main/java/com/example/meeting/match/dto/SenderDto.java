@@ -10,7 +10,7 @@ public class SenderDto {
 
     private Long idx;
 
-    private String nickname;
+    private String nickName;
 
     private String img;
 
@@ -20,7 +20,9 @@ public class SenderDto {
 
     private String age;
 
-    private String location;
+    private String location1;
+
+    private String location2;
 
     private String kakao_id;
 
@@ -36,15 +38,16 @@ public class SenderDto {
     private Timestamp createdTime;
 
     public void setAll(Long user_id, String nickname, String img, String email, String gender, String age,
-                       String location, String kakao_id, int point, String token, String jwt, boolean status, boolean is_matched,
+                       String location1, String location2, String kakao_id, int point, String token, String jwt, boolean status, boolean is_matched,
                        Timestamp createdTime){
         this.idx = user_id;
-        this.nickname = nickname;
+        this.nickName = nickname;
         this.img =img;
         this.email = email;
         this.gender = gender;
         this.age = age;
-        this.location = location;
+        this.location1 = location1;
+        this.location2 = location2;
         this.kakao_id = kakao_id;
         this.point = point;
         this.token = token;
