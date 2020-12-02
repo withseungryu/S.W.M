@@ -78,11 +78,16 @@ public class MatchedRestController {
         User sender = userRepository.findByIdx(senderId);
         System.out.println(sender.getEmail());
         List<Matched> maList = matchedRepository.findSend(sender.getIdx());
+        if(maList.size()== 0){
+            List<SenderListDto> exL = new ArrayList<>();
+            return new ResponseEntity<>(exL, HttpStatus.OK);
+        }
         List<SenderListDto> senderListDtos = new ArrayList<>();
         int idx = 0;
-        System.out.println("test1");
+
         List<Matched> tmp = new ArrayList<>();
-        Date bdate = maList.get(0).getBoard().getDate();;
+        Date bdate = maList.get(0).getBoard().getDate();
+        System.out.println("test2");
         for(int i=0; i<maList.size(); ++i){
 
             Board board = maList.get(i).getBoard();
@@ -128,8 +133,13 @@ public class MatchedRestController {
             }
 
         }
+
+        if(senderListDtos == null){
+            List<SenderListDto> exL = new ArrayList<>();
+            return new ResponseEntity<>(exL, HttpStatus.OK);
+        }else{
         return new ResponseEntity<>(senderListDtos, HttpStatus.OK);
-    }
+    }}
 
 
     @GetMapping("/maker/{makerId}")
@@ -276,7 +286,10 @@ public class MatchedRestController {
                 }
             }
         }
-
+        if(makerDtos == null){
+            List<MakerBoardDto> know =  new ArrayList<>();
+            return new ResponseEntity<>(know, HttpStatus.OK);
+        }
         return new ResponseEntity<>(makerDtos, HttpStatus.OK);
     }
 
@@ -331,8 +344,8 @@ public class MatchedRestController {
 
         if(matchedDto.getStatus()) {
 
-            if(sender.getPoint() >=50) {
-                sender.setPoint(sender.getPoint() - 50);
+            if(sender.getPoint() >=1) {
+                sender.setPoint(sender.getPoint() - 1);
                 userRepository.save(sender);
             }else{
                 ans.setAnswer(402, "포인트가 부족합니다.....");
@@ -390,8 +403,8 @@ public class MatchedRestController {
         if(matched.isStatus()){
             ans.setAnswer(400, "Fail(이미 결제됐는데요?)");
         }else{
-            if(maker.getPoint() >=50) {
-                maker.setPoint(maker.getPoint() - 50);
+            if(maker.getPoint() >=1) {
+                maker.setPoint(maker.getPoint() - 1);
                 userRepository.save(maker);
             }else{
                 ans.setAnswer(402, "포인트가 부족합니다.....");

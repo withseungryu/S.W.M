@@ -13,11 +13,15 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -94,6 +98,7 @@ public class UserRestController {
         user.setImg("https://shallwemeet-bucket.s3.ap-northeast-2.amazonaws.com/static/" + "user_img_" + email+ ".jpg");
         user.setNickName(nickName);
         user.setAge(age);
+        user.setPoint(10);
         user.setLocation1(location1);
         user.setLocation2(location2);
         if(phone != null) {
@@ -178,7 +183,20 @@ public class UserRestController {
 
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void cronJobSch() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        Date now = new Date();
+        String strDate = sdf.format(now);
+        System.out.println("Java cron job expression:: " + strDate);
+        userRepository.changePoint();
+        //        List<User> user = userRepository.findAll();
+//        for(int i=0; i<user.size(); ++i){
+//            user.get(i).setPoint(10);
+//            userRepository.save(user.get(i));
+//        }
 
+    }
 
 
 
