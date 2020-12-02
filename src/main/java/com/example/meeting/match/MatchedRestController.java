@@ -8,6 +8,7 @@ import com.example.meeting.fcmserver.TokenDto;
 import com.example.meeting.match.dto.*;
 import com.example.meeting.user.User;
 import com.example.meeting.user.UserRepository;
+import javassist.bytecode.stackmap.BasicBlock;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -25,8 +26,11 @@ import java.io.*;
 import java.net.http.HttpClient;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
 
 
 @RestController
@@ -70,12 +74,61 @@ public class MatchedRestController {
     }
 
     @GetMapping("/sender/{senderId}")
-    public @ResponseBody ResponseEntity<List<Matched>> getSended(@PathVariable("senderId")Long senderId){
+    public @ResponseBody ResponseEntity<List<SenderListDto>> getSended(@PathVariable("senderId")Long senderId){
         User sender = userRepository.findByIdx(senderId);
         System.out.println(sender.getEmail());
         List<Matched> maList = matchedRepository.findSend(sender.getIdx());
-        System.out.println(maList.size());
-        return new ResponseEntity<>(maList, HttpStatus.OK);
+        List<SenderListDto> senderListDtos = new ArrayList<>();
+        int idx = 0;
+        System.out.println("test1");
+        List<Matched> tmp = new ArrayList<>();
+        Date bdate = maList.get(0).getBoard().getDate();;
+        for(int i=0; i<maList.size(); ++i){
+
+            Board board = maList.get(i).getBoard();
+            if(i==0){
+                if(i==maList.size()-1){
+                    tmp.add(maList.get(i));
+                    senderListDtos.add(new SenderListDto(board.getDate(), new ArrayList<>(tmp)));
+                }else{
+                tmp.add(maList.get(i));
+                }
+            }
+            else if(i == maList.size()-1){
+                if(board.getDate().toString().equals(bdate.toString())){
+                    tmp.add(maList.get(i));
+
+
+                    senderListDtos.add(new SenderListDto(tmp.get(0).getBoard().getDate(),new ArrayList<>(tmp)));
+                    tmp.clear();
+                }else{
+
+                    senderListDtos.add(new SenderListDto(tmp.get(0).getBoard().getDate(), new ArrayList<>(tmp)));
+
+                    tmp.clear();
+
+                    tmp.add(maList.get(i));
+
+                    senderListDtos.add(new SenderListDto(tmp.get(0).getBoard().getDate(), new ArrayList<>(tmp)));
+
+                }
+            }
+            else{
+                if(board.getDate().toString().equals(bdate.toString())){
+
+                    tmp.add(maList.get(i));
+                }else{
+
+
+                    senderListDtos.add(new SenderListDto(tmp.get(0).getBoard().getDate(), new ArrayList<>(tmp)));
+                    tmp.clear();
+                    tmp.add(maList.get(i));
+                    bdate = board.getDate();
+                }
+            }
+
+        }
+        return new ResponseEntity<>(senderListDtos, HttpStatus.OK);
     }
 
 
@@ -86,8 +139,12 @@ public class MatchedRestController {
         List<MakerBoardDto> makerDtos = new ArrayList<>();
 
         List<Object[]> boards = boardRepository.findUser(maker);
-
+        List<MakerBoardDto> ltmp = new ArrayList<>();
+        if(boards == null){
+            return new ResponseEntity<>(ltmp, HttpStatus.OK);
+        }
         List<SenderDto> senderDtos = new ArrayList<>();
+        Matched tmp = (Matched)boards.get(boards.size()-1)[1];
 
 
         for(int i=0; i<boards.size()-1; ++i) {
@@ -99,10 +156,12 @@ public class MatchedRestController {
             Matched m2 = (Matched) boards.get(i+1)[1];
             Long idx = b.getIdx();
 
+
+
             if(m == null){
                 MakerBoardDto mt = new MakerBoardDto();
                 List<SenderDto> new_senderDtos = new ArrayList<>();
-                mt.setAll(idx,b.getTitle(),b.getImg1(), b.getImg2(), b.getImg3(), b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),  b.getCreatedDate(),b.getUpdatedDate(),  new_senderDtos );
+                mt.setAll(idx,b.getTitle(),b.getImg1(), b.getImg2(), b.getImg3(), b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(), b.getDate(),  b.getCreatedDate(),b.getUpdatedDate(),  new_senderDtos );
                 makerDtos.add(mt);
                 new_senderDtos.clear();
                 senderDtos.clear();
@@ -117,7 +176,7 @@ public class MatchedRestController {
 
                         senderDto2.setAll(m2.getSender().getIdx(), m2.getSender().getNickName(),
                                 m2.getSender().getImg(), m2.getSender().getEmail(),
-                                m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(), m2.getSender().getLocation2(),
+                                m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(), m2.getSender().getLocation2(), m2.getSender().getPhone(),
                                 m2.getSender().getKakao_id(), m2.getSender().getPoint(), m2.getSender().getToken(), m2.getSender().getJwt(), m2.isStatus(),
                                 m2.is_matched(), m2.getCreatedTime());
                         senderDtos.add(senderDto2);
@@ -126,7 +185,7 @@ public class MatchedRestController {
                         new_senderDtos2.addAll(senderDtos);
 
                     }
-                    mt2.setAll(b2.getIdx(), b2.getTitle(),  b2.getImg1(),  b2.getImg2(),  b2.getImg3(), b2.getTag1(), b2.getTag2(), b2.getTag3(), b2.getLocation1(), b2.getLocation2(), b2.getNum_type(), b2.getAge(), b2.getGender(), b2.getCreatedDate(), b2.getUpdatedDate(), new_senderDtos );
+                    mt2.setAll(b2.getIdx(), b2.getTitle(),  b2.getImg1(),  b2.getImg2(),  b2.getImg3(), b2.getTag1(), b2.getTag2(), b2.getTag3(), b2.getLocation1(), b2.getLocation2(), b2.getNum_type(), b2.getAge(), b2.getGender(), b2.getDate(),b2.getCreatedDate(), b2.getUpdatedDate(), new_senderDtos2 );
                     new_senderDtos.clear();
                     makerDtos.add(mt2);
                     senderDtos.clear();
@@ -137,12 +196,13 @@ public class MatchedRestController {
             }
 
 
-
+            System.out.println(m.getSender().getEmail());
 
             SenderDto senderDto = new SenderDto();
+
             senderDto.setAll(m.getSender().getIdx(), m.getSender().getNickName(),
                     m.getSender().getImg(), m.getSender().getEmail(),
-                    m.getSender().getGender(), m.getSender().getAge(), m.getSender().getLocation1(),m.getSender().getLocation2(),
+                    m.getSender().getGender(), m.getSender().getAge(), m.getSender().getLocation1(),m.getSender().getLocation2(), m.getSender().getPhone(),
                     m.getSender().getKakao_id(), m.getSender().getPoint(),  m.getSender().getToken(), m.getSender().getJwt(),m.isStatus(),
                     m.is_matched(), m.getCreatedTime());
 
@@ -153,7 +213,7 @@ public class MatchedRestController {
                 MakerBoardDto mt = new MakerBoardDto();
                 List<SenderDto> new_senderDtos = new ArrayList<>();
                 new_senderDtos.addAll(senderDtos);
-                mt.setAll(idx,m.getBoard().getTitle(), m.getBoard().getImg1(), m.getBoard().getImg2(),  m.getBoard().getImg3(), m.getBoard().getTag1(), m.getBoard().getTag2(), m.getBoard().getTag3(), m.getBoard().getLocation1(), m.getBoard().getLocation2(), m.getBoard().getNum_type(), m.getBoard().getAge(), m.getBoard().getGender(), m.getBoard().getCreatedDate(), m.getBoard().getUpdatedDate(),  new_senderDtos );
+                mt.setAll(idx,m.getBoard().getTitle(), m.getBoard().getImg1(), m.getBoard().getImg2(),  m.getBoard().getImg3(), m.getBoard().getTag1(), m.getBoard().getTag2(), m.getBoard().getTag3(), m.getBoard().getLocation1(), m.getBoard().getLocation2(), m.getBoard().getNum_type(), m.getBoard().getAge(), m.getBoard().getGender(),  m.getBoard().getDate(), m.getBoard().getCreatedDate(), m.getBoard().getUpdatedDate(),  new_senderDtos );
                 makerDtos.add(mt);
                 new_senderDtos.clear();
                 senderDtos.clear();
@@ -165,7 +225,7 @@ public class MatchedRestController {
                         SenderDto senderDto2 = new SenderDto();
                         senderDto2.setAll(m2.getSender().getIdx(), m2.getSender().getNickName(),
                                 m2.getSender().getImg(), m2.getSender().getEmail(),
-                                m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(),  m2.getSender().getLocation2(),
+                                m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(),  m2.getSender().getLocation2(), m2.getSender().getPhone(),
                                 m2.getSender().getKakao_id(), m2.getSender().getPoint(),  m2.getSender().getToken(), m2.getSender().getJwt(),m2.isStatus(),
                                 m2.is_matched(), m2.getCreatedTime());
                         senderDtos.add(senderDto2);
@@ -175,7 +235,7 @@ public class MatchedRestController {
                         new_senderDtos2.addAll(senderDtos);
                     }
                     MakerBoardDto mt2 = new MakerBoardDto();
-                    mt2.setAll(b2.getIdx(), b2.getTitle(),  b2.getImg1(),  b2.getImg2(),  b2.getImg3(), b2.getTag1(), b2.getTag2(), b2.getTag3(), b2.getLocation1(), b2.getLocation2(), b2.getNum_type(), b2.getAge(), b2.getGender(),  b2.getCreatedDate(), b2.getUpdatedDate(), new_senderDtos2 );
+                    mt2.setAll(b2.getIdx(), b2.getTitle(),  b2.getImg1(),  b2.getImg2(),  b2.getImg3(), b2.getTag1(), b2.getTag2(), b2.getTag3(), b2.getLocation1(), b2.getLocation2(), b2.getNum_type(), b2.getAge(), b2.getGender(), b2.getDate(),  b2.getCreatedDate(), b2.getUpdatedDate(), new_senderDtos2 );
 
                     makerDtos.add(mt2);
                     new_senderDtos2.clear();
@@ -188,7 +248,7 @@ public class MatchedRestController {
                     SenderDto senderDto2 = new SenderDto();
                     senderDto2.setAll(m2.getSender().getIdx(), m2.getSender().getNickName(),
                             m2.getSender().getImg(), m2.getSender().getEmail(),
-                            m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(), m2.getSender().getLocation2(),
+                            m2.getSender().getGender(), m2.getSender().getAge(), m2.getSender().getLocation1(), m2.getSender().getLocation2(), m2.getSender().getPhone(),
                             m2.getSender().getKakao_id(), m2.getSender().getPoint(),  m2.getSender().getToken(), m2.getSender().getJwt(), m2.isStatus(),
                             m2.is_matched(), m2.getCreatedTime());
                     senderDtos.add(senderDto2);
@@ -197,7 +257,7 @@ public class MatchedRestController {
                     MakerBoardDto mt = new MakerBoardDto();
                     List<SenderDto> new_senderDtos = new ArrayList<>();
                     new_senderDtos.addAll(senderDtos);
-                    mt.setAll(idx, m.getBoard().getTitle(),  m.getBoard().getImg1(),  m.getBoard().getImg2(),  m.getBoard().getImg3(), m.getBoard().getTag1(), m.getBoard().getTag2(), m.getBoard().getTag3(), m.getBoard().getLocation1(), m.getBoard().getLocation2(), m.getBoard().getNum_type(), m.getBoard().getAge(), m.getBoard().getGender(),  m.getBoard().getCreatedDate(), m.getBoard().getUpdatedDate(), new_senderDtos );
+                    mt.setAll(idx, m.getBoard().getTitle(),  m.getBoard().getImg1(),  m.getBoard().getImg2(),  m.getBoard().getImg3(), m.getBoard().getTag1(), m.getBoard().getTag2(), m.getBoard().getTag3(), m.getBoard().getLocation1(), m.getBoard().getLocation2(), m.getBoard().getNum_type(), m.getBoard().getAge(), m.getBoard().getGender(), m.getBoard().getDate(), m.getBoard().getCreatedDate(), m.getBoard().getUpdatedDate(), new_senderDtos );
                     new_senderDtos.clear();
                     makerDtos.add(mt);
                     senderDtos.clear();

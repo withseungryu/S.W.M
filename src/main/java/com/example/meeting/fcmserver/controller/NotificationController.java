@@ -1,5 +1,6 @@
 package com.example.meeting.fcmserver.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -23,7 +24,7 @@ public class NotificationController {
     AndroidPushNotificationService androidPushNotificationsService;
 
     @PostMapping(value = "/api/send")
-    public @ResponseBody ResponseEntity<String> send(@RequestBody TokenDto tokenDto) throws JSONException, InterruptedException  {
+    public @ResponseBody ResponseEntity<String> send(@RequestBody TokenDto tokenDto) throws JSONException, InterruptedException, UnsupportedEncodingException {
         String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenDto);
 
 

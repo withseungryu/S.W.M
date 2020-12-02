@@ -83,7 +83,7 @@ public class UserRestController {
 
     @PostMapping("api/users")
     public @ResponseBody
-    ResponseEntity uploadFile(@RequestParam(value = "img") MultipartFile img, @RequestParam("email") String email, @RequestParam("nickName") @RequestBody  String nickName, @RequestParam(value="age", required=false) @RequestBody String age, @RequestParam(value="gender", required=false) @RequestBody String gender,  @RequestParam("location1") @RequestBody String location1, @RequestParam("location2") @RequestBody String location2,  @RequestParam("kakao_id") @RequestBody String kakao_id, @RequestParam(value= "token", required = false) @RequestBody String token ) throws IllegalStateException, IOException {
+    ResponseEntity uploadFile(@RequestParam(value = "img") MultipartFile img, @RequestParam("email") String email, @RequestParam(value="phone", required = false) String phone, @RequestParam("nickName") @RequestBody  String nickName, @RequestParam(value="age", required=false) @RequestBody String age, @RequestParam(value="gender", required=false) @RequestBody String gender,  @RequestParam("location1") @RequestBody String location1, @RequestParam("location2") @RequestBody String location2,  @RequestParam("kakao_id") @RequestBody String kakao_id, @RequestParam(value= "token", required = false) @RequestBody String token ) throws IllegalStateException, IOException {
 
         User user = new User();
 
@@ -96,7 +96,12 @@ public class UserRestController {
         user.setAge(age);
         user.setLocation1(location1);
         user.setLocation2(location2);
-        user.setKakao_id(kakao_id);
+        if(phone != null) {
+            user.setPhone(phone);
+        }else{
+            user.setPhone("01034353065");
+        }
+        user.setKakao_id("tmp");
 //        user.setToken(token);
 
         if(gender != null) {
@@ -141,7 +146,7 @@ public class UserRestController {
         User user = userRepository.findByIdx(Long.parseLong(userId));
         if(img!= null){
 
-            String uPath = s3Uploader.upload(img, "user_img_" + email + ".jpg" );
+            String uPath = s3Uploader.upload(img, "user_img_" + user.getEmail() + ".jpg" );
         }
         if(email != null){
             user.setEmail(email);

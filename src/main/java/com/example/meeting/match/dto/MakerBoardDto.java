@@ -40,6 +40,7 @@ public class MakerBoardDto {
 
     private String gender;
 
+    private Date date;
 
     private Timestamp createdDate;
 
@@ -49,7 +50,7 @@ public class MakerBoardDto {
 
     public void setAll(Long idx, String title, String img1, String img2, String img3, String tag1, String tag2,
                        String tag3, String location1, String location2,  String num_type, int age, String gender,
-                       Timestamp createdDate,
+                       Date date, Timestamp createdDate,
                        Timestamp updatedDate, List<SenderDto> senderDtoList){
         this.idx = idx;
         this.title = title;
@@ -64,6 +65,7 @@ public class MakerBoardDto {
         this.num_type = num_type;
         this.age = age;
         this.gender = gender;
+        this.date =date;
         this.createdDate =createdDate;
         this.updatedDate = updatedDate;
         List<SenderDto> nList = new ArrayList<>();

@@ -21,6 +21,7 @@ public class UserDto {
 
     private String location2;
 
+    private String number;
     private String kakao_id;
 
     private int point;
@@ -32,6 +33,7 @@ public class UserDto {
         this.gender = user.getGender();
         this.age = user.getAge();
         this.location1 = user.getLocation1();
+        this.number = user.getPhone();
         this.kakao_id = user.getKakao_id();
         this.point = user.getPoint();
     }

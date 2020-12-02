@@ -4,6 +4,7 @@ import com.example.meeting.user.User;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -32,6 +33,7 @@ public class BoardDto {
     private String age;
 
     private String gender;
+    private Date date;
 
     private Long user;
 
@@ -40,7 +42,7 @@ public class BoardDto {
     private String updatedDate;
 
     public void setAll(Long idx, String title, String img1, String img2, String img3, String tag1,
-                           String tag2, String tag3, String location, String num_type, String age, String gender,
+                           String tag2, String tag3, String location, String num_type, String age, String gender, Date date,
                            Long user, String createdDate, String updatedDate){
 
         this.idx = idx;
@@ -55,6 +57,7 @@ public class BoardDto {
         this.num_type = num_type;
         this.age = age;
         this.gender = gender;
+        this.date =date;
         this.user = user;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;

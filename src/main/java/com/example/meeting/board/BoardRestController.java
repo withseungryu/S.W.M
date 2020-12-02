@@ -44,29 +44,52 @@ public class BoardRestController {
                                                    @RequestParam(value ="num_type" ,required = false) String num_type,
                                                    @RequestParam(value ="age", required = false) String age,
                                                    @RequestParam(value = "userId", required = false) Long userId,
-                                                   @RequestParam(value="gender", required = false) String gender
+                                                   @RequestParam(value="gender", required = false) String gender,
+                                                   @RequestParam(value="date", required=false) String pdate
     ) throws IOException, ParseException {
 
         Page<Object[]> boards;
         User user = userRepository.findByIdx(userId);
 
+////Created Date
+//        String bdate1 =  "2000-01-01 00:00:00";
+//        String bdate2 = "2100-01-01 00:00:00";
+//
+//
+//        java.sql.Timestamp date1 = Timestamp.valueOf(bdate1);
+//        java.sql.Timestamp date2 = Timestamp.valueOf(bdate2);
+//
+//
+//        System.out.println(date1);
+//        System.out.println(date2);
 
-        String bdate1 =  "2000-01-01 00:00:00";
-        String bdate2 = "2100-01-01 00:00:00";
+        String bpdate1;
+        String bpdate2;
+        //Date
+        if(pdate == null || pdate.equals("상관없음")){
+            bpdate1 = "2000-01-01 00:00:00";
+            bpdate2 = "2100-01-01 00:00:00";
+        }else {
+            bpdate1 = pdate + " 00:00:00";
+            bpdate2 = pdate + " 23:59:59";
+        }
+        java.sql.Timestamp date1 = Timestamp.valueOf(bpdate1);
+        java.sql.Timestamp date2 = Timestamp.valueOf(bpdate2);
 
 
-        java.sql.Timestamp date1 = Timestamp.valueOf(bdate1);
-        java.sql.Timestamp date2 = Timestamp.valueOf(bdate2);
 
 
-        System.out.println(date1);
-        System.out.println(date2);
+        if(gender.equals("male")){
+            gender = "female";
+        }else if(gender.equals("female")){
+            gender = "male";
+        }
         if(location1 == null && location2 == null && num_type == null && age == null &&  (gender == null || gender.equals("상관없음"))){
             boards = boardRepository.getfindNullAll(user, date1, date2, pageable);
         }
 
         else if(location1.equals("상관없음") && location2.equals("상관없음") && num_type.equals("상관없음") && age.equals("상관없음")){
-
+            System.out.println("ddd");
             boards = boardRepository.getfindAll(user, date1, date2, gender, pageable);
         }else if(location1.equals("상관없음") && location2.equals("상관없음") && num_type.equals("상관없음")){
             int age1 = Integer.parseInt(age) +3;
@@ -114,7 +137,7 @@ public class BoardRestController {
             }
 
         }
-
+        System.out.println(boards.getPageable());
 
         if(boards.getContent().size()==0){
             List<BoardDto> adaBoard = new ArrayList<>();
@@ -122,7 +145,7 @@ public class BoardRestController {
         }
         List<BoardDto> adaBoard = adaBookmark(boards.getContent(), userId);
 
-
+        System.out.println(adaBoard.size());
         return new ResponseEntity<>(adaBoard, HttpStatus.OK);
 
 
@@ -130,6 +153,7 @@ public class BoardRestController {
 
     public List<BoardDto> adaBookmark(List<Object[]> tmp, Long userId){
 
+        System.out.println(tmp.size());
         List<BoardDto> boards = new ArrayList<>();
         BoardDto be_board = new BoardDto();
         Long saveIdx = 0L;
@@ -143,26 +167,25 @@ public class BoardRestController {
             Board b = (Board) o[0];
             Bookmark m = (Bookmark) o[1];
 
-            Matched matched = matchedRepository.findForBoard(b.getIdx());
-            if(matched == null) {
 
-                if (m == null) {
-                    board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
-                            b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
-                            b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
-                    );
+            if (m == null) {
+                board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
+                        b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
+                );
 
-                } else {
-                    board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
-                            b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
-                            b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
-                    );
-                }
-
-                BoardDto tmpBoard = new BoardDto();
-                tmpBoard.cloneBoard(board);
-                boards.add(tmpBoard);
+            } else {
+                board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
+                        b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
+                        b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
+                );
             }
+
+
+            BoardDto tmpBoard = new BoardDto();
+            tmpBoard.cloneBoard(board);
+            boards.add(tmpBoard);
+
         }
         return boards;
     }
@@ -181,6 +204,7 @@ public class BoardRestController {
                                                             @RequestParam(value="tag2", required = false) @RequestBody String ptag2,
                                                             @RequestParam(value="tag3", required = false) @RequestBody String ptag3,
                                                             @RequestParam("average_age") @RequestBody String page,
+                                                            @RequestParam(value= "date", required = false) @RequestBody String pdate,
                                                             @RequestParam(value = "user", required = false) @RequestBody String puser
     ) throws IOException, ParseException {
 
@@ -201,13 +225,13 @@ public class BoardRestController {
         }else{
             pgender = "female";
         }
+        if(pdate==null){
+            pdate = "2020-12-07";
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date utilDate = format.parse(pdate);
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
-//        ///게시판 추가 부분
-//        Integer latest_data = boardRepository.test();
-//
-//        if(latest_data == null){
-//            latest_data = 0;
-//        }
 
         Board board = new Board();
         board.setTitle(title);
@@ -228,6 +252,7 @@ public class BoardRestController {
         board.setNum_type(num_type);
         board.setAge(Integer.parseInt(age));
         board.setGender(pgender);
+        board.setDate(sqlDate);
         board.setUser(userRepository.findByIdx(Long.parseLong(puser)));
         board.setCreatedDateNow();
         board.setUpdatedDateNow();
@@ -269,12 +294,12 @@ public class BoardRestController {
         if(m==null){
             boardDto.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
                     b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
-                     b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
+                     b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), false
             );
         }else{
             boardDto.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
                     b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
-                    b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
+                    b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
             );
         }
 
@@ -297,24 +322,68 @@ public class BoardRestController {
         return new ResponseEntity<>(ans, HttpStatus.OK);
     }
 
-    @GetMapping("/rec/time")
-    public ResponseEntity<List<Board>> recBoard(){
-        Pageable pageable = PageRequest.of(0, 5);
-        Page<Board> recs = boardRepository.rec1(pageable);
+    @GetMapping("/rec/time/{idx}")
+    public ResponseEntity<List<Board>> recBoard( @PathVariable("idx") Long idx){
+        User user = userRepository.findByIdx(idx);
+
+        String gender = user.getGender();
+        if(gender.equals("male")){
+            gender = "female";
+        }
+        else{
+            gender = "male";
+        }
+        List<Board> recs = boardRepository.rec1(gender);
 
 
-        List<Board> boards = recs.getContent();
+        List<Board> boards = new ArrayList<>();
+        int flag = 0;
+        for(int i=0; i<recs.size(); ++i){
+            Matched m = boardRepository.recFor(recs.get(i).getIdx());
+
+            if(flag==5){
+                break;
+            }
+
+            if(m==null){
+
+                boards.add(recs.get(i));
+                flag++;
+            }
+        }
+
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 
-    @GetMapping("/rec/location")
-    public ResponseEntity<List<Board>> recBoard(@PathVariable("idx") Long idx,
-                                                @RequestParam(value = "location1", required = false) String location1,
-                                                @RequestParam(value = "location2", required = false) String location2){
-        Pageable pageable = PageRequest.of(0, 5);
-        Page<Board> recs = boardRepository.rec2(location1, location2, pageable);
+    @GetMapping("/rec/location/{idx}")
+    public ResponseEntity<List<Board>> recLocation(@PathVariable("idx") Long idx
+                                               ){
+        User user = userRepository.findByIdx(idx);
 
-        List<Board> boards = recs.getContent();
+        String gender =user.getGender();
+        if(gender.equals("male")){
+            gender = "female";
+        }
+        else{
+            gender = "male";
+        }
+
+        List<Board> recs = boardRepository.rec2(user.getLocation1(), user.getLocation2(), gender);
+
+        List<Board> boards = new ArrayList<>();
+        int flag = 0;
+        for(int i=0; i<recs.size(); ++i){
+            Matched m = boardRepository.recFor(recs.get(i).getIdx());
+
+            if(flag==5){
+                break;
+            }
+
+            if(m==null){
+                boards.add(recs.get(i));
+                flag++;
+            }
+        }
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 

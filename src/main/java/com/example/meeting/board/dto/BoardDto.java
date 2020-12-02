@@ -39,6 +39,7 @@ public class BoardDto {
 
     private String gender;
 
+    private Date date;
 
     private Timestamp createdDate;
 
@@ -49,7 +50,7 @@ public class BoardDto {
     public boolean check;
 
     public void setBookAll(Long idx, String title, String img1, String img2, String img3, String tag1, String tag2,
-                  String tag3, String location1, String location2,  String num_type, int age, String gender,
+                  String tag3, String location1, String location2,  String num_type, int age, String gender, Date date,
                           Timestamp createdDate,
                   Timestamp updatedDate, User user, boolean check){
 
@@ -66,6 +67,7 @@ public class BoardDto {
         this.num_type = num_type;
         this.age = age;
         this.gender = gender;
+        this.date = date;
         this.createdDate =createdDate;
         this.updatedDate = updatedDate;
         this.user = user;
@@ -86,6 +88,7 @@ public class BoardDto {
         this.num_type = boardDto.getNum_type();;
         this.age = boardDto.getAge();
         this.gender = boardDto.getGender();
+        this.date = boardDto.getDate();
         this.createdDate = boardDto.getCreatedDate();
         this.updatedDate = boardDto.getUpdatedDate();;
         this.user = boardDto.getUser();
