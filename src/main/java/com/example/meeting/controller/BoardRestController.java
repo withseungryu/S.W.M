@@ -29,7 +29,6 @@ import java.util.Random;
 import com.example.meeting.service.BoardService;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/api/boards")
 public class BoardRestController {
 
@@ -38,6 +37,16 @@ public class BoardRestController {
     private UserRepository userRepository;
     private MatchedRepository matchedRepository;
     private S3Uploader s3Uploader;
+
+    public BoardRestController(BoardService boardService, BoardRepository boardRepository,
+                               UserRepository userRepository, MatchedRepository matchedRepository,
+                               S3Uploader s3Uploader){
+        this.boardService = boardService;
+        this.boardRepository = boardRepository;
+        this.userRepository = userRepository;
+        this.matchedRepository = matchedRepository;
+        this.s3Uploader = s3Uploader;
+    }
 
     @GetMapping
     public ResponseEntity<List<BoardDto>> getBoard(Pageable pageable,

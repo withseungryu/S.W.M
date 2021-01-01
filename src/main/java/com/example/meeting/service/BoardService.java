@@ -12,6 +12,7 @@ import com.example.meeting.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,16 +27,12 @@ import java.util.Random;
 import static com.example.meeting.service.BoardService.randomAlphaWord;
 
 @AllArgsConstructor
+@Service
 public class BoardService {
 
     BoardRepository boardRepository;
     UserRepository userRepository;
     S3Uploader s3Uploader;
-
-    BoardService(BoardRepository boardRepository, UserRepository userRepository){
-        this.boardRepository = boardRepository;
-        this.userRepository = userRepository;
-    }
 
     public List<BoardDto> getBoards(Pageable pageable,
                                     String location1,

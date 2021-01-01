@@ -4,11 +4,13 @@ import com.example.meeting.dao.BoardRepository;
 import com.example.meeting.dao.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.sql.Date;
 
 @AllArgsConstructor
+@Service
 public class UserService {
 
     UserRepository userRepository;
