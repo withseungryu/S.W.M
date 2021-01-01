@@ -31,6 +31,9 @@ public class UserRestController {
     private UserRepository userRepository;
     private S3Uploader s3Uploader;
 
+    /*
+    kakao login api를 쓸 경우 활성화하자!
+     */
 //    @GetMapping("/auth/kakao/callback")
 //    public @ResponseBody
 //    String kakaoCallback(String code) { //@ResponseBody를 붙이는 이유 : Data를 리턴해주는 컨트롤러 간ㄷ된다.
@@ -43,9 +46,7 @@ public class UserRestController {
 //        return "{code: 0001, message: \"성공\"}";
 //    }
 
-
     private JwtService jwtService = new JwtService();
-
 
     @PostMapping("api/users/login")
     public @ResponseBody
@@ -182,21 +183,8 @@ public class UserRestController {
 
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void cronJobSch() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        Date now = new Date();
-        String strDate = sdf.format(now);
-        System.out.println("Java cron job expression:: " + strDate);
-        userRepository.changePoint();
-        //        List<User> user = userRepository.findAll();
-//        for(int i=0; i<user.size(); ++i){
-//            user.get(i).setPoint(10);
-//            userRepository.save(user.get(i));
-//        }
-
-    }
-
-
-
 }
+
+
+
+

@@ -64,7 +64,6 @@ public class Board implements Serializable {
     @Column
     private Date date;
 
-
     @Column
     private Timestamp createdDate;
 

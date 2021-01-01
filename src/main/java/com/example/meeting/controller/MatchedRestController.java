@@ -551,7 +551,7 @@ public class MatchedRestController {
         //실제로 요청하기
         //Http 요청하기 - POST 방식으로 - 그리고 response 변수의 응답을 받음.
         ResponseEntity<String> response = rt.exchange(
-                "https://shallwemeet.co.kr/api/send",
+                "https://mimansa.co.kr/api/send",
                 HttpMethod.POST,
                 httpEntity,
                 String.class

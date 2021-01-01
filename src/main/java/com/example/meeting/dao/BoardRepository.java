@@ -7,9 +7,12 @@ import com.example.meeting.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import javax.transaction.Transactional;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -73,12 +76,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         @Query("SELECT b FROM Board b  WHERE b.location1 = ?1 AND b.location2 = ?2 AND b.gender = ?3 ORDER BY b.createdDate DESC " )
         public List<Board> rec2(String location1, String location2, String gender);
 
-
-
-
         @Query("SELECT b FROM Board b WHERE b.img1 = ?1")
         public Board searchImg(String img1);
 
-
-
+        @Transactional
+        @Modifying
+        @Query(value="DELETE FROM Board b WHERE b.date < ?1", nativeQuery = false)
+        public void deleteBoard(Date time);
 }
