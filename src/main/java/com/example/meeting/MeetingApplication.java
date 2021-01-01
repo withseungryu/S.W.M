@@ -1,7 +1,9 @@
 package com.example.meeting;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.aws.autoconfigure.context.ContextInstanceDataAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,6 +21,7 @@ public class MeetingApplication {
         SpringApplication.run(MeetingApplication.class, args);
     }
     @Configuration
+    @EnableAutoConfiguration(exclude = {ContextInstanceDataAutoConfiguration.class})
     @EnableGlobalMethodSecurity(prePostEnabled=true)
     @EnableWebSecurity
     static class SecurityConfiguration extends WebSecurityConfigurerAdapter {

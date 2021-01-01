@@ -1,14 +1,7 @@
 package com.example.meeting.scheduler;
 
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import com.example.meeting.user.User;
-import com.example.meeting.user.UserRepository;
-import lombok.NoArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
+import com.example.meeting.dao.UserRepository;
 import org.springframework.stereotype.Component;
 
 @Component

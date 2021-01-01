@@ -20,6 +20,7 @@ repositories {
 
 
 dependencies {
+
     compile group: 'net.nurigo', name: 'javaSDK', version: '2.2'
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
@@ -36,6 +37,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.data:spring-data-rest-hal-explorer'
     implementation  'com.google.firebase:firebase-admin:6.5.0'
+    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
