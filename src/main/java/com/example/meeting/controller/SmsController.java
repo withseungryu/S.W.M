@@ -46,7 +46,6 @@ public class SmsController {
             ans.setMessage("Failed");
             return new ResponseEntity<>(ans, HttpStatus.OK);
         }
-
     }
 
     @GetMapping("/check/checkSMS")

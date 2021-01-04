@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Random;
 import com.example.meeting.service.BoardService;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/boards")
 public class BoardRestController {
@@ -37,16 +38,6 @@ public class BoardRestController {
     private UserRepository userRepository;
     private MatchedRepository matchedRepository;
     private S3Uploader s3Uploader;
-
-    public BoardRestController(BoardService boardService, BoardRepository boardRepository,
-                               UserRepository userRepository, MatchedRepository matchedRepository,
-                               S3Uploader s3Uploader){
-        this.boardService = boardService;
-        this.boardRepository = boardRepository;
-        this.userRepository = userRepository;
-        this.matchedRepository = matchedRepository;
-        this.s3Uploader = s3Uploader;
-    }
 
     @GetMapping
     public ResponseEntity<List<BoardDto>> getBoard(Pageable pageable,
@@ -61,7 +52,6 @@ public class BoardRestController {
 
         List<BoardDto> adaBoard = boardService.getBoards(pageable, location1, location2, num_type, age, userId, gender, pdate);
         return new ResponseEntity<>(adaBoard, HttpStatus.OK);
-
     }
 
     @PostMapping
@@ -106,16 +96,23 @@ public class BoardRestController {
 
     @PutMapping("/{idx}")
     public ResponseEntity<?> putBoard(@PathVariable("idx")Long idx, @RequestBody Board board){
-        Board persistBoard = boardRepository.getOne(idx);
-        persistBoard.update(board);
-        boardRepository.save(persistBoard);
+        try{
+            boardService.putBoard(idx, board);
+        }catch(Exception e){
+            return new ResponseEntity<>("{}", HttpStatus.EXPECTATION_FAILED);
+        }
         return new ResponseEntity<>("{}", HttpStatus.OK);
     }
 
     @DeleteMapping("/{idx}")
     public ResponseEntity<Answer> deleteBoard(@PathVariable("idx")Long idx){
-        boardRepository.deleteById(idx);
         Answer ans = new Answer();
+        try{
+            boardService.deleteBoard(idx);
+        }catch(Exception e){
+            ans.setAnswer(1001, "failed");
+            return new ResponseEntity<>(ans, HttpStatus.EXPECTATION_FAILED);
+        }
         ans.setAnswer(200, "success");
         return new ResponseEntity<>(ans, HttpStatus.OK);
     }

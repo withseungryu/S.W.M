@@ -9,12 +9,12 @@ import com.example.meeting.entity.Matched;
 import com.example.meeting.dto.fcm.TokenDto;
 import com.example.meeting.entity.User;
 import com.example.meeting.dao.UserRepository;
+import lombok.AllArgsConstructor;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
-
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -27,7 +27,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/match")
 public class MatchedRestController {
@@ -35,12 +35,6 @@ public class MatchedRestController {
     private MatchedRepository matchedRepository;
     private BoardRepository boardRepository;
     private UserRepository userRepository;
-
-    public MatchedRestController(MatchedRepository matchedRepository, UserRepository userRepository, BoardRepository boardRepository){
-        this.matchedRepository = matchedRepository;
-        this.userRepository = userRepository;
-        this.boardRepository = boardRepository;
-    }
 
     @GetMapping
     public @ResponseBody ResponseEntity<List<Matched>> getTest(){
@@ -136,7 +130,6 @@ public class MatchedRestController {
         return new ResponseEntity<>(senderListDtos, HttpStatus.OK);
     }}
 
-
     @GetMapping("/maker/{makerId}")
     public  @ResponseBody ResponseEntity<List<MakerBoardDto>> getMade(@PathVariable("makerId")Long makerId){
         User maker = userRepository.findByIdx(makerId);
@@ -193,8 +186,6 @@ public class MatchedRestController {
             return new ResponseEntity<>(makerDtos, HttpStatus.OK);
 
         }
-
-
         for(int i=0; i<boards.size()-1; ++i) {
 
             BoardDto board = new BoardDto();
@@ -203,8 +194,6 @@ public class MatchedRestController {
             Board b2 = (Board) boards.get(i+1)[0];
             Matched m2 = (Matched) boards.get(i+1)[1];
             Long idx = b.getIdx();
-
-
 
             if(m == null){
                 MakerBoardDto mt = new MakerBoardDto();
@@ -239,10 +228,8 @@ public class MatchedRestController {
                     senderDtos.clear();
                 }
 
-
                 continue;
             }
-            
 
             SenderDto senderDto = new SenderDto();
 
@@ -253,7 +240,6 @@ public class MatchedRestController {
                     m.is_matched(), m.getCreatedTime());
 
             senderDtos.add(senderDto);
-
 
             if(idx != b2.getIdx()){
                 MakerBoardDto mt = new MakerBoardDto();
@@ -309,10 +295,7 @@ public class MatchedRestController {
                     senderDtos.clear();
                 }
             }
-
-
         }
-
         for(int i=0; i<makerDtos.size(); ++i){
             for(int j=0; j<makerDtos.get(i).getSenders().size(); ++j){
                 if(makerDtos.get(i).getSenders().get(j).is_matched()){
@@ -367,11 +350,7 @@ public class MatchedRestController {
                 return new ResponseEntity<>(ans, HttpStatus.OK);
             }
         }
-//
         AnswerMatch ans = new AnswerMatch();
-
-//
-//
         Matched matched = new Matched();
         matched.setBoard(board);
         matched.setSender(sender);
@@ -391,17 +370,10 @@ public class MatchedRestController {
         }else{
             matched.setStatus(matchedDto.getStatus());
         }
-
         ans.setAnswer(200, "Success");
-
         matchedRepository.save(matched);
-
-
-
         return new ResponseEntity<>(ans, HttpStatus.CREATED);
-
     }
-
 
     @PatchMapping("/payment")
     public ResponseEntity<AnswerMatch> payMatch(@RequestBody MatchedDto matchedDto) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
@@ -409,9 +381,6 @@ public class MatchedRestController {
         User sender = userRepository.findByIdx(matchedDto.getSenderId());
         User maker = userRepository.findByIdx(board.getUser().getIdx());
         AnswerMatch ans = new AnswerMatch();
-
-
-
 
         List<Matched> matcheds = matchedRepository.findBoard(board);
         boolean chk = false;
@@ -433,8 +402,6 @@ public class MatchedRestController {
         }
 
         List<Matched> matcheds2 = matchedRepository.findMatched(sender.getIdx(), board.getIdx());
-
-
         Matched matched = matcheds2.get(0);
         if(matched.isStatus()){
             ans.setAnswer(400, "Fail(이미 결제됐는데요?)");
@@ -452,23 +419,14 @@ public class MatchedRestController {
             fcmExecute(matched.getBoard().getUser().getToken(), matched.getSender().getToken() );
             ans.setAnswer(200, "Success(성사 완료)");
         }
-
-
-
-
-
         return new ResponseEntity<>(ans, HttpStatus.CREATED);
 
     }
-
-
-
 
     @PatchMapping
     public ResponseEntity<AnswerMatch> updateMatch(@RequestBody MatchedDto matchedDto) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
         Board board = boardRepository.findByIdx(matchedDto.getBoardId());
         User sender = userRepository.findByIdx(matchedDto.getSenderId());
-
 
         AnswerMatch ans = new AnswerMatch();
         List<Matched> matcheds = matchedRepository.findBoard(board);
@@ -490,12 +448,8 @@ public class MatchedRestController {
             }
         }
 
-
         List<Matched> matched2 = matchedRepository.findMatched(sender.getIdx(), board.getIdx());
-
-        System.out.println(matched2.size());
         Matched matched = matched2.get(0);
-
         if(matched.isStatus()) {
 
             if (matched.is_matched()) {
@@ -546,7 +500,6 @@ public class MatchedRestController {
         //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
         HttpEntity<TokenDto> httpEntity =
                 new HttpEntity<>(tokenDto, headers);
-
 
         //실제로 요청하기
         //Http 요청하기 - POST 방식으로 - 그리고 response 변수의 응답을 받음.

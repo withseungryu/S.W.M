@@ -113,7 +113,6 @@ public class BoardService {
             }else{
                 boards = boardRepository.getList4(location1, location2, num_type, user,  date1, date2,gender, pageable);
             }
-
         }else{
             int age1 = Integer.parseInt(age) +3;
             int age2 = Integer.parseInt(age) -3;
@@ -123,14 +122,11 @@ public class BoardService {
                 boards = boardRepository.getList7(location1, location2, num_type, age1, age2, user,  date1, date2, gender,pageable);
             }
         }
-
         if(boards.getContent().size()==0){
             List<BoardDto> adaBoard = new ArrayList<>();
             return adaBoard;
         }
-
         List<BoardDto> adaBoard = adaBookmark(boards.getContent(), userId);
-
         return adaBoard;
     }
 
@@ -150,7 +146,6 @@ public class BoardService {
             Board b = (Board) o[0];
             Bookmark m = (Bookmark) o[1];
 
-
             if (m == null) {
                 board.setBookAll(b.getIdx(), b.getTitle(), b.getImg1(), b.getImg2(), b.getImg3(),
                         b.getTag1(), b.getTag2(), b.getTag3(), b.getLocation1(), b.getLocation2(), b.getNum_type(), b.getAge(), b.getGender(),
@@ -164,11 +159,9 @@ public class BoardService {
                 );
             }
 
-
             BoardDto tmpBoard = new BoardDto();
             tmpBoard.cloneBoard(board);
             boards.add(tmpBoard);
-
         }
         return boards;
     }
@@ -232,9 +225,7 @@ public class BoardService {
         board.setUser(userRepository.findByIdx(Long.parseLong(puser)));
         board.setCreatedDateNow();
         board.setUpdatedDateNow();
-
         boardRepository.save(board);
-
 
         s3Uploader.upload(img1, imgName + "_1.jpg" );
         s3Uploader.upload(img2, imgName + "_2.jpg");
@@ -263,7 +254,6 @@ public class BoardService {
                     b.getDate(), b.getCreatedDate(), b.getUpdatedDate(), b.getUser(), true
             );
         }
-
         return boardDto;
     }
 
@@ -278,7 +268,6 @@ public class BoardService {
             gender = "male";
         }
         List<Board> recs = boardRepository.rec1(gender);
-
 
         List<Board> boards = new ArrayList<>();
         int flag = 0;
@@ -295,7 +284,6 @@ public class BoardService {
                 flag++;
             }
         }
-
         return boards;
     }
 
@@ -309,9 +297,7 @@ public class BoardService {
         else{
             gender = "male";
         }
-
         List<Board> recs = boardRepository.rec2(user.getLocation1(), user.getLocation2(), gender);
-
         List<Board> boards = new ArrayList<>();
         int flag = 0;
         for(int i=0; i<recs.size(); ++i){
@@ -332,19 +318,21 @@ public class BoardService {
     public static String randomAlphaWord(int wordLength) {
 
         Random r = new Random();
-
         StringBuilder sb = new StringBuilder(wordLength);
-
-
-
         for(int i = 0; i < wordLength; i++) {
-
             char tmp = (char) ('a' + r.nextInt('z' - 'a'));
-
             sb.append(tmp);
-
         }
         return sb.toString();
+    }
 
+    public void putBoard(Long idx, Board board){
+        Board persistBoard = boardRepository.getOne(idx);
+        persistBoard.update(board);
+        boardRepository.save(persistBoard);
+    }
+
+    public void deleteBoard(Long idx){
+        boardRepository.deleteById(idx);
     }
 }
